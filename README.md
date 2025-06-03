@@ -29,11 +29,14 @@ This is a web-based application designed to run **three linear models** of the O
 
 In the app.py file you have to write the executable path of Julia.
 
-```result = subprocess.run(
-    ['C:\\Users\\admin\\AppData\\Local\\Programs\\Julia-1.11.5\\bin\\julia.exe', model_scripts[model_type], input_path, output_path],
-    capture_output=True,
-    text=True
-)
+```python
+julia_executable_path = 'C:\\Users\\admin\\AppData\\Local\\Programs\\Julia-1.11.5\\bin\\julia.exe'
+```
+
+To find the path to julia executable you can run the following command to a command prompt:
+
+```bash
+where /r C:\ julia.exe
 ```
 
 ---
