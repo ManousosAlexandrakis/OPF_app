@@ -80,11 +80,11 @@ add JuMP Gurobi XLSX DataFrames
 
  ### 2. Run the Application
 
-In the project folder, start the Flask app:
+In the project folder, run the app.py file:
 
 Then open your browser and go to:
 
 http://127.0.0.1:5000
 
-To close the app press ctlr + C
+To close the app press Ctlr + C in python terminal.
 
