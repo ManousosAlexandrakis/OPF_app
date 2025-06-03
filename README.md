@@ -40,7 +40,7 @@ Make sure you have Python 3.8+ installed.
 
 ```bash
 git https://github.com/ManousosAlexandrakis/OPF_app.git
-cd opf-platform
+cd OPF_app
 ```
 
 
