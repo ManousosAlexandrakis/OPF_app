@@ -30,7 +30,9 @@ This is a web-based application designed to run **three linear models** of the O
 In the app.py file you have to write the executable path of Julia.
 
 ```python
-julia_executable_path = 'C:\\Users\\admin\\AppData\\Local\\Programs\\Julia-1.11.5\\bin\\julia.exe'
+julia_executable_path = 'julia'  # Ensure Julia is in your PATH or provide the full path to the executable
+# Full path example
+# julia_executable_path = 'C:\\Users\\admin\\AppData\\Local\\Programs\\Julia-1.11.5\\bin\\julia.exe'
 ```
 
 To find the path to julia executable you can run the following command to a command prompt:
