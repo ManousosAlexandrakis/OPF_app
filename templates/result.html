@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ model_type }} Results</title>
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f5f7fa;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar {
+      background: #4361ee;
+      padding: 1rem 2rem;
+      margin-bottom: 2rem;
+      border-radius: 0 0 8px 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin-right: 1.5rem;
+      font-weight: 500;
+    }
+
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 2rem auto;
+      padding: 2rem;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      text-align: center;
+    }
+
+    h1 {
+      font-weight: 500;
+      margin-bottom: 1rem;
+      color: #222;
+    }
+
+    p {
+      color: #444;
+      margin-bottom: 1.5rem;
+    }
+
+    .download-btn {
+      display: inline-block;
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 20px;
+      text-decoration: none;
+      border-radius: 6px;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+    }
+
+    .download-btn:hover {
+      background-color: #43a047;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      color: #4361ee;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .back-link:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <div class="navbar">
+    <a href="/">Home</a>
+    <a href="/theory">Theory</a>
+    <a href="/plotting">Plotting</a>
+  </div>
+
+  <!-- Results Container -->
+  <div class="container">
+    <h1>{{ model_type }} Results</h1>
+    <p>Analysis completed successfully!</p>
+    <a href="{{ url_for('download', filename=output_filename) }}" class="download-btn">Download Results</a>
+    <br>
+    <a href="/" class="back-link">Run another analysis</a>
+  </div>
+
+</body>
+</html>

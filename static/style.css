@@ -1,0 +1,129 @@
+/* Base styles that can be used across both pages */
+:root {
+    --primary: #4361ee;
+    --secondary: #3f37c9;
+    --accent: #4895ef;
+    --dark: #1e1e1e;
+    --light: #f8f9fa;
+    --success: #4cc9f0;
+    --warning: #f72585;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+}
+
+.references-list {
+    font-family: 'Times New Roman', serif;
+    line-height: 1.8;
+}
+
+.references-list ol {
+    padding-left: 2rem;
+}
+
+.references-list li {
+    margin-bottom: 1rem;
+    text-align: justify;
+    hanging-punctuation: first;
+}
+
+.references-list em {
+    font-style: italic;
+}
+
+/* Center all math displays */
+.math-display {
+    text-align: center;
+    margin: 20px auto;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    overflow-x: auto;
+    display: flex;
+    justify-content: center;
+    max-width: 100%;
+}
+
+/* Center KaTeX rendered blocks */
+.katex-display {
+    margin: 1em auto !important;
+    text-align: center;
+    display: inline-block;
+}
+
+/* Center aligned equations */
+.katex .katex-mathml,
+.katex .katex-html {
+    text-align: center;
+    margin: 0 auto;
+}
+
+/* For multi-line aligned equations */
+.katex-display > .katex {
+    display: inline-block;
+    text-align: center;
+}
+
+/* Constraint lists */
+.constraint-list {
+    text-align: left;
+    display: inline-block;
+    margin: 0 auto;
+}
+
+.file-upload-btn {
+    display: inline-block;
+    background-color: #4361ee;
+    color: white;
+    padding: 0.65rem 1.25rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    border: none;
+}
+
+.file-upload-btn:hover {
+    background-color: #364fc7;
+    transform: scale(1.02);
+}
+
+.file-upload-btn:active {
+    transform: scale(0.98);
+}
+
+
+.navbar {
+  background: #4361ee;
+  padding: 1rem 2rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.navbar a:hover {
+  text-decoration: underline;
+}
+

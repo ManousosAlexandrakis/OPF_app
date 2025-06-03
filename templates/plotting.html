@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Power System Visualization</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: 'Roboto', sans-serif;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f7fa;
+      color: #333;
+    }
+
+    .navbar {
+      background: #4361ee;
+      padding: 1rem 2rem;
+      margin-bottom: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    .navbar a {
+      color: white;
+      text-decoration: none;
+      margin-right: 1.5rem;
+      font-weight: 500;
+    }
+
+    .navbar a:hover {
+      text-decoration: underline;
+    }
+
+    h1 {
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+
+    .drop-zone {
+      border: 2px dashed #ccc;
+      border-radius: 10px;
+      padding: 2.5rem;
+      text-align: center;
+      background: white;
+      transition: 0.3s ease;
+    }
+
+    .drop-zone.highlight {
+      border-color: #4361ee;
+      background-color: #eef3ff;
+    }
+
+    .drop-zone input[type="file"] {
+      margin-top: 10px;
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin: 2rem 0;
+    }
+
+    select, button {
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-size: 1rem;
+    }
+
+    select {
+      border: 1px solid #ccc;
+      background: white;
+    }
+
+    button {
+      background: #4361ee;
+      color: white;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    button:hover {
+      background: #364fc7;
+    }
+
+    .file-list {
+      margin-top: 1.5rem;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .file-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #eee;
+    }
+
+    .file-item:last-child {
+      border-bottom: none;
+    }
+
+    .chart-container {
+      height: 500px;
+      width: 100%;
+      margin: 2rem 0;
+      background: white;
+      padding: 1rem;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .plot-controls {
+      background: #ffffff;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    }
+
+    .control-group {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+    }
+
+    .control-group label {
+      font-weight: bold;
+      min-width: 60px;
+      margin-right: 10px;
+    }
+
+    .control-group input[type="number"] {
+      width: 80px;
+      padding: 5px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin: 0 5px;
+    }
+
+    .control-group button {
+      padding: 5px 10px;
+      margin-left: 5px;
+      background: #4a6baf;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .control-group button:hover {
+      background: #3a5a9f;
+    }
+
+    #zoomSlider {
+      width: 150px;
+      margin: 0 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="navbar">
+    <a href="/">Home</a>
+    <a href="/theory">Theory</a>
+    <a href="/plotting">Plotting</a>
+  </div>
+
+  <h1>OPF Results Visualization</h1>
+
+<div class="drop-zone" id="dropZone">
+  <p><strong>Drag & drop</strong> OPF result files here (Bolognani, BTheta, or Decoupled)</p>
+  <p>or</p>
+  <label for="fileInput" class="file-upload-btn">📁 Choose Files</label>
+  <input type="file" id="fileInput" multiple accept=".xlsx" hidden>
+</div>
+<div id="fileNameDisplay" style="margin-top: 10px; font-size: 0.95rem;"></div>
+
+  <div class="controls">
+    <select id="plotType">
+      <option value="active_power">Active Power (P)</option>
+      <option value="reactive_power">Reactive Power (Q)</option>
+      <option value="voltage">Voltage Magnitude</option>
+      <option value="voltage_angle">Voltage Angle</option>
+      <option value="price">Nodal Prices</option>
+    </select>
+    <button id="plotBtn">Generate Plot</button>
+    <button id="clearBtn">Clear All</button>
+  </div>
+
+  <div class="file-list" id="fileList"></div>
+
+  <div class="chart-container">
+    <canvas id="resultsChart"></canvas>
+  </div>
+
+  <!-- Load required libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+  <script src="/static/plotting.js"></script>
+</body>
+</html>
