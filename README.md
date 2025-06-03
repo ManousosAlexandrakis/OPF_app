@@ -29,7 +29,7 @@ This is a web-based application designed to run **three linear models** of the O
 
 ---
 
-### 1. Python Setup
+### 1. Python and Julia Setup
 
 Make sure you have Python 3.8+ installed.
 
@@ -38,23 +38,24 @@ Make sure you have Python 3.8+ installed.
 
 ```bash```
 
-
-```python
+```bash
 git https://github.com/ManousosAlexandrakis/OPF_app.git
 cd opf-platform
 ```
 
-Make sure you have Python 3.8+ installed.
+
 
 #### Install required Python packages:
+
+Make sure you have Python 3.8+ installed.
 
 ```bash
 pip install flask
 ```
 
-Make sure you have Julia installed (version 1.8 or later recommended).
 
 #### Install required Julia packages:
+Make sure you have Julia installed (version 1.8 or later recommended).
 
 Start Julia in the terminal:
 
@@ -63,7 +64,7 @@ Then in the Julia REPL, enter package mode (press ]) and run:
 add JuMP Gurobi XLSX DataFrames
 ```
 
-3. ### Run the Application
+ ### 2. Run the Application
 
 In the project folder, start the Flask app:
 
