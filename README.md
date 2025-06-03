@@ -27,6 +27,15 @@ This is a web-based application designed to run **three linear models** of the O
 
 ## Getting Started
 
+In the app.py file you have to write the executable path of Julia.
+
+```result = subprocess.run(
+    ['C:\\Users\\admin\\AppData\\Local\\Programs\\Julia-1.11.5\\bin\\julia.exe', model_scripts[model_type], input_path, output_path],
+    capture_output=True,
+    text=True
+)
+```
+
 ---
 
 ### 1. Python and Julia Setup
