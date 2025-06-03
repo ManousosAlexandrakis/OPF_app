@@ -27,6 +27,15 @@ This is a web-based application designed to run **three linear models** of the O
 
 ## Getting Started
 
+#### Clone the Repository
+
+```bash```
+
+```bash
+git clone https://github.com/ManousosAlexandrakis/OPF_app.git
+cd OPF_app
+```
+
 In the app.py file you have to write the executable path of Julia.
 
 ```python
@@ -46,18 +55,6 @@ where /r C:\ julia.exe
 ### 1. Python and Julia Setup
 
 Make sure you have Python 3.8+ installed.
-
-
-#### Clone the Repository
-
-```bash```
-
-```bash
-git clone https://github.com/ManousosAlexandrakis/OPF_app.git
-cd OPF_app
-```
-
-
 
 #### Install required Python packages:
 
