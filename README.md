@@ -40,7 +40,7 @@ Make sure you have Python 3.8+ installed.
 
 
 ```python
-git clone https://github.com/yourusername/opf-platform.git
+git https://github.com/ManousosAlexandrakis/OPF_app.git
 cd opf-platform
 ```
 
