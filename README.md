@@ -38,32 +38,19 @@ Make sure you have Python 3.8+ installed.
 
 ```bash```
 
-<pre lang="markdown">
-```bash
-git clone https://github.com/yourusername/opf-platform.git
-cd opf-platform
-```
-</pre>
 
-<pre>
 ```python
-def hello():
-    print("Hello, world!")
-```
-</pre>
-
-
-
-
 git clone https://github.com/yourusername/opf-platform.git
 cd opf-platform
+```
 
 Make sure you have Python 3.8+ installed.
 
 #### Install required Python packages:
 
-```bash```
+```bash
 pip install flask
+```
 
 Make sure you have Julia installed (version 1.8 or later recommended).
 
@@ -72,9 +59,9 @@ Make sure you have Julia installed (version 1.8 or later recommended).
 Start Julia in the terminal:
 
 Then in the Julia REPL, enter package mode (press ]) and run:
-
+```julia
 add JuMP Gurobi XLSX DataFrames
-
+```
 
 3. ### Run the Application
 
@@ -84,5 +71,5 @@ Then open your browser and go to:
 
 http://127.0.0.1:5000
 
-To close the app prec ctlr + C
+To close the app press ctlr + C
 
