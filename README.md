@@ -39,7 +39,7 @@ Make sure you have Python 3.8+ installed.
 ```bash```
 
 ```bash
-git https://github.com/ManousosAlexandrakis/OPF_app.git
+git clone https://github.com/ManousosAlexandrakis/OPF_app.git
 cd OPF_app
 ```
 
