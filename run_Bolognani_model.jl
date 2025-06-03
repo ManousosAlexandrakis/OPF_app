@@ -1,9 +1,6 @@
 
-
-
-
 # Packages
-using DataFrames, JuMP,Gurobi
+using DataFrames, JuMP,Gurobi, GLPK
 using LinearAlgebra
 using XLSX
 
@@ -295,10 +292,13 @@ end
 
 ### Create a mathematical optimization model using the Gurobi Optimizer as the solver
 
-GUROBI_ENV = Gurobi.Env()
-model = Model(() -> Gurobi.Optimizer(GUROBI_ENV))
-set_optimizer_attribute(model, "MIPGap", 0.0) 
-set_silent(model)
+# GUROBI_ENV = Gurobi.Env()
+# model = Model(() -> Gurobi.Optimizer(GUROBI_ENV))
+# set_optimizer_attribute(model, "MIPGap", 0.0) 
+# set_silent(model)
+model = Model(GLPK.Optimizer)
+set_optimizer_attribute(model, "msg_lev", 1)  # Basic logging
+set_optimizer_attribute(model, "tm_lim", 300000) 
 
 ### Variables
 
