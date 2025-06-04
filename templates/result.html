@@ -3,19 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <title>{{ model_type }} Results</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Montserrat:wght@600&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Roboto', sans-serif;
       background-color: #f5f7fa;
       margin: 0;
       padding: 0;
+      color: #333;
     }
 
     .navbar {
-      background: #4361ee;
+      background: #00a0b0;
       padding: 1rem 2rem;
       margin-bottom: 2rem;
-      border-radius: 0 0 8px 8px;
+      border-radius: 0 0 10px 10px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
@@ -36,46 +38,68 @@
       padding: 2rem;
       background: white;
       border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
       text-align: center;
     }
 
     h1 {
-      font-weight: 500;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
       margin-bottom: 1rem;
+      font-size: 1.8rem;
       color: #222;
     }
 
     p {
+      font-size: 1.1rem;
       color: #444;
       margin-bottom: 1.5rem;
     }
 
     .download-btn {
       display: inline-block;
-      background-color: #4CAF50;
-      color: white;
-      padding: 12px 20px;
+      background-color: #edc951;
+      color: #000;
+      padding: 12px 24px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
       text-decoration: none;
-      border-radius: 6px;
-      font-weight: 500;
-      transition: background-color 0.3s ease;
+      transition: background-color 0.3s ease, box-shadow 0.2s ease;
     }
 
     .download-btn:hover {
-      background-color: #43a047;
+      background-color: #e6bd48;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
 
     .back-link {
       display: inline-block;
       margin-top: 1.5rem;
-      color: #4361ee;
+      color: #00a0b0;
       text-decoration: none;
       font-weight: 500;
+      font-size: 0.95rem;
     }
 
     .back-link:hover {
       text-decoration: underline;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.4rem;
+      }
+
+      .download-btn {
+        padding: 10px 18px;
+        font-size: 0.95rem;
+      }
     }
   </style>
 </head>
@@ -91,6 +115,9 @@
   <!-- Results Container -->
   <div class="container">
     <h1>{{ model_type }} Results</h1>
+    <div class="status-box">
+      Solution Status: {{ status }}
+    </div>
     <p>Analysis completed successfully!</p>
     <a href="{{ url_for('download', filename=output_filename) }}" class="download-btn">Download Results</a>
     <br>

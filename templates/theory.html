@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>OPF Mathematical Theory</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <meta charset="UTF-8">
+  <title>OPF Mathematical Theory</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
   <style>
     body {
       font-family: 'Roboto', sans-serif;
@@ -13,247 +14,124 @@
       background: #f5f7fa;
       color: #333;
     }
-
     .navbar {
-      background: #4361ee;
+      background: #00a0b0;
       padding: 1rem 2rem;
       margin-bottom: 2rem;
-      border-radius: 8px;
+      border-radius: 0 0 10px 10px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-
     .navbar a {
       color: white;
       text-decoration: none;
       margin-right: 1.5rem;
       font-weight: 500;
     }
-
     .navbar a:hover {
       text-decoration: underline;
     }
-
     h1 {
-      font-weight: 500;
+      font-weight: bold;
       margin-bottom: 1.5rem;
     }
-
-    .drop-zone {
-      border: 2px dashed #ccc;
-      border-radius: 10px;
-      padding: 2.5rem;
-      text-align: center;
-      background: white;
-      transition: 0.3s ease;
-    }
-
-    .drop-zone.highlight {
-      border-color: #4361ee;
-      background-color: #eef3ff;
-    }
-
-    .drop-zone input[type="file"] {
-      margin-top: 10px;
-    }
-
-    .controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      margin: 2rem 0;
-    }
-
-    select, button {
-      padding: 0.6rem 1.2rem;
-      border-radius: 6px;
-      font-size: 1rem;
-    }
-
-    select {
-      border: 1px solid #ccc;
-      background: white;
-    }
-
-    button {
-      background: #4361ee;
-      color: white;
-      border: none;
-      cursor: pointer;
-      transition: background 0.2s ease;
-    }
-
-    button:hover {
-      background: #364fc7;
-    }
-
-    .file-list {
-      margin-top: 1.5rem;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      overflow: hidden;
-    }
-
-    .file-item {
-      display: flex;
-      justify-content: space-between;
-      padding: 0.75rem 1rem;
-      border-bottom: 1px solid #eee;
-    }
-
-    .file-item:last-child {
-      border-bottom: none;
-    }
-
-    .chart-container {
-      height: 500px;
-      width: 100%;
-      margin: 2rem 0;
+    .math-display {
+      margin: 1rem 0;
       background: white;
       padding: 1rem;
-      border-radius: 8px;
+      border-radius: 6px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     }
-
-    .plot-controls {
-      background: #ffffff;
-      padding: 15px;
-      border-radius: 8px;
-      margin: 20px 0;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    .model-section {
+      margin-bottom: 3rem;
     }
-
-    .control-group {
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-    }
-
-    .control-group label {
-      font-weight: bold;
-      min-width: 60px;
-      margin-right: 10px;
-    }
-
-    .control-group input[type="number"] {
-      width: 80px;
-      padding: 5px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      margin: 0 5px;
-    }
-
-    .control-group button {
-      padding: 5px 10px;
-      margin-left: 5px;
-      background: #4a6baf;
-      color: white;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .control-group button:hover {
-      background: #3a5a9f;
-    }
-
-    #zoomSlider {
-      width: 150px;
-      margin: 0 10px;
+    .citation {
+      vertical-align: super;
+      font-size: 0.8em;
+      color: var(--primary, #4361ee);
     }
   </style>
 </head>
 <body>
-    <div class="navbar">
-        <a href="/">Home</a>
-        <a href="/theory">Theory</a>
-        <a href="/plotting">Plotting</a>
+  <div class="navbar">
+    <a href="/">Home</a>
+    <a href="/theory">Theory</a>
+    <a href="/plotting">Plotting</a>
+  </div>
+
+  <div class="container">
+    <h1>Optimal Power Flow Mathematical Models</h1>
+
+    <!-- Bolognani Model -->
+    <div class="model-section">
+      <h2>Bolognani Model</h2>
+      <p>The Bolognani model is a linear approximation of the power flow equations...</p>
+
+      <h3>Objective Function</h3>
+      <div class="math-display" id="bolognani-obj"></div>
+
+      <h3>Constraints</h3>
+      <div class="math-display" id="bolognani-constraints"></div>
     </div>
 
-    <div class="container">
-        <h1>Optimal Power Flow Mathematical Models</h1>
+    <!-- BTheta Model -->
+    <div class="model-section">
+      <h2>BTheta Model</h2>
+      <p>The BTheta model uses a decoupled approach...</p>
 
-        <!-- Bolognani Model -->
-        <div class="model-section">
-            <h2>Bolognani Model</h2>
-            <div class="model-description">
-                <p>The Bolognani model is a linear approximation of the power flow equations...</p>
-            </div>
-            <h3>Objective Function</h3>
-            <div class="math-display" id="bolognani-obj"></div>
+      <h3>Objective Function</h3>
+      <div class="math-display" id="btheta-obj"></div>
 
-            <h3>Constraints</h3>
-            <div class="math-display" id="bolognani-constraints"></div>
-        </div>
-
-        <!-- BTheta Model -->
-        <div class="model-section">
-            <h2>BTheta Model</h2>
-            <div class="model-description">
-                <p>The BTheta model uses a decoupled approach...</p>
-            </div>
-            <h3>Objective Function</h3>
-            <div class="math-display" id="btheta-obj"></div>
-
-            <h3>Constraints</h3>
-            <div class="math-display" id="btheta-constraints"></div>
-        </div>
-
-        <!-- Decoupled Model -->
-        <div class="model-section">
-            <h2>Decoupled Model</h2>
-            <div class="model-description">
-                <p>The Decoupled model uses a decoupled approach...</p>
-            </div>
-            <h3>Objective Function</h3>
-            <div class="math-display" id="decoupled-obj"></div>
-
-            <h3>Constraints</h3>
-            <div class="math-display" id="decoupled-constraints"></div>
-        </div>
-
-        <!-- Citations -->
-        <p>
-            The linear approximation approach builds on foundational work by Bolognani and Zampieri 
-            <span class="citation">[1]</span> and extends the convex optimization framework 
-            described by Taylor <span class="citation">[2]</span>.
-        </p>
-
-        <!-- References -->
-        <div class="model-card">
-            <h2>References</h2>
-            <div class="references-list">
-                <ol>
-                    <li id="ref-bolognani2016">
-                        S. Bolognani and S. Zampieri. 
-                        <em>On the Existence and Linear Approximation of the Power Flow Solution in Power Distribution Networks</em>. 
-                        IEEE Transactions on Power Systems, vol. 31, no. 1, pp. 163–172, Jan. 2016. 
-                        DOI: <a href="https://doi.org/10.1109/TPWRS.2015.2395457" target="_blank">10.1109/TPWRS.2015.2395457</a>.
-                    </li>
-                    <li id="ref-taylor2015">
-                        J. A. Taylor. 
-                        <em>Convex Optimization of Power Systems</em>. 
-                        Cambridge, UK: Cambridge University Press, 2015. 
-                        ISBN: 978-1-107-07034-8.
-                    </li>
-                </ol>
-            </div>
-        </div>
+      <h3>Constraints</h3>
+      <div class="math-display" id="btheta-constraints"></div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
-    <script>
-    // Bolognani Objective (centered)
+    <!-- Decoupled Model -->
+    <div class="model-section">
+      <h2>Decoupled Model</h2>
+      <p>The Decoupled model uses a decoupled approach...</p>
+
+      <h3>Objective Function</h3>
+      <div class="math-display" id="decoupled-obj"></div>
+
+      <h3>Constraints</h3>
+      <div class="math-display" id="decoupled-constraints"></div>
+    </div>
+
+    <!-- Citations -->
+    <p>
+      The linear approximation approach builds on foundational work by Bolognani and Zampieri 
+      <span class="citation">[1]</span> and extends the convex optimization framework 
+      described by Taylor <span class="citation">[2]</span>.
+    </p>
+
+    <!-- References -->
+    <div class="model-card">
+      <h2>References</h2>
+      <div class="references-list">
+        <ol>
+          <li id="ref-bolognani2016">
+            S. Bolognani and S. Zampieri. 
+            <em>On the Existence and Linear Approximation of the Power Flow Solution in Power Distribution Networks</em>. 
+            IEEE Transactions on Power Systems, vol. 31, no. 1, pp. 163–172, Jan. 2016. 
+            DOI: <a href="https://doi.org/10.1109/TPWRS.2015.2395457" target="_blank">10.1109/TPWRS.2015.2395457</a>.
+          </li>
+          <li id="ref-taylor2015">
+            J. A. Taylor. 
+            <em>Convex Optimization of Power Systems</em>. 
+            Cambridge, UK: Cambridge University Press, 2015. 
+            ISBN: 978-1-107-07034-8.
+          </li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script>
+    // Bolognani Model
+    katex.render(String.raw`\min_{p,q,u,\theta,rp,rq,f,rq} \sum_{g \in G} MC_g \cdot p_g`, document.getElementById('bolognani-obj'), { displayMode: true });
     katex.render(String.raw`
-        \min_{p,q,u,\theta,rp,rq,f,rq} \sum_{g \in G} MC_g \cdot p_g
-    `, document.getElementById('bolognani-obj'), {
-        displayMode: true,
-        throwOnError: false
-    });
-    
-    // Bolognani Constraints (centered with proper alignment)
-    katex.render(String.raw`
-        \begin{aligned}
+       \begin{aligned}
         &(ν_j):u_j = V_0 + \frac{1}{V_0}\cdot \sum_{i \in K}(Re[Z_{j,i}]\cdot rp_i+Im[Z_{j,i}]\cdot rq_i) \\
         &\quad +\frac{1}{V_0}\cdot \sum_{i \in L}(Re[Z_{j,i}]\cdot rp_i+Im[Z_{j,i}]\cdot rq_i) ,\; j \in J \\
         &(η_j):θ_j = Θ_0 + \frac{1}{V_0^2}\cdot \sum_{i \in K}(-Re[Z_{j,i}]\cdot rq_i+Im[Z_{j,i}]\cdot rp_i) \\
@@ -279,82 +157,40 @@
         &(π_l): rq_{l} = D^{q}_{l}, \; l \in L\\
         &p \geq 0
         \end{aligned}
-    `, document.getElementById('bolognani-constraints'), {
-        displayMode: true,
-        throwOnError: false
-    });
+    `, document.getElementById('bolognani-constraints'), { displayMode: true });
 
-        // BTheta Model Equations
+    // BTheta Model
+    katex.render(String.raw`\min_{p,u,\theta,p_{ij}} \sum_{g \in G} MC_g \cdot p_g`, document.getElementById('btheta-obj'), { displayMode: true });
     katex.render(String.raw`
-        \min_{p,q,u,\theta,rp,rq,f,rq} \sum_{g \in G} MC_g \cdot p_g
-    `, document.getElementById('btheta-obj'), {
-        displayMode: true,
-        throwOnError: false
-    });
+      \begin{aligned}
+      & P_{min_g} \le p_g \le P_{max_g},\; g \in G \\
+      & u_n = 1,\; n \in N \\
+      & \theta_{slackbus} = \theta_0 \\
+      & p_{ij} = b_{ij}(θ_i - θ_j),\; i \in N,\; j \in M(i) \\
+      & \sum_{j \in M(i)} p_{ij} = p_i - D^p_i,\; i \in N \\
+      & -S_{ij} \le p_{ij} \le S_{ij} \\
+      & p \ge 0
+      \end{aligned}
+    `, document.getElementById('btheta-constraints'), { displayMode: true });
+
+    // Decoupled Model
+    katex.render(String.raw`\min_{p,q,u,\theta,p_{ij},q_{ij}} \sum_{g \in G} MC_g \cdot p_g`, document.getElementById('decoupled-obj'), { displayMode: true });
     katex.render(String.raw`
-        \begin{aligned}
-        &        P_{min_g}\le p_g \le P_{max_g} , g \in G  \\
-        &     u_n = 1 , n \in N\\
-        &    \theta_{slackbus} =  \theta_0 \\
-        &     p_{ij}= b_{ij}(θ_i-θ_j),\; i\in N\; \text{και}\; j \in M(i) \\
-        &     \sum_{j\in M(i)}p_{ij}= p_i-D^{p}_i, i \in N \\
-        &         -S_{ij}\leq p_{ij}\leq S_{ij} \\
-        &p \geq 0
-        \end{aligned}
-    `, document.getElementById('btheta-constraints'), {
-        displayMode: true,
-        throwOnError: false
-    });
-
-        katex.render(String.raw`
-        \min_{p,q,u,\theta,rp,rq,f,rq} \sum_{g \in G} MC_g \cdot p_g
-    `, document.getElementById('decoupled-obj'), {
-        displayMode: true,
-        throwOnError: false
-    });
-        // Decoupled Model Equations
-        katex.render(String.raw`
-            \begin{aligned}
-            &        P_{min_g}\le p_g \le P_{max_g} , g \in G  \\
-            &     Q_{min_g}\le q_g \le Q_{max_g} , g \in G\\
-            &     V_{min}\le u_n \le V_{max} , n \in N\\
-            &     u_n = 1 , n \in N\\
-            &    \theta_{slackbus} =  \theta_0 \\
-            &     p_{ij}= b_{ij}(u_i-u_j),\; i\in N\; \text{και}\; j \in M(i) \\
-            &     q_{ij}= b_{ij}(θ_i-θ_j),\; i\in N\; \text{και}\; j \in M(i) \\     
-            &     \sum_{j\in M(i)}p_{ij}= p_i-D^{p}_i, i \in N \\
-            &     \sum_{j\in M(i)}q_{ij}= q_i-D^{q}_i, i \in N \\
-            &         -S_{ij}\leq p_{ij}\leq S_{ij} \\
-            &         -S_{ij}\leq q_{ij}\leq S_{ij} \\
-            &p \geq 0
-        \end{aligned}
-    `, document.getElementById('decoupled-constraints'), {
-        displayMode: true,
-        throwOnError: false
-    });
-    </script>
-
-
-
-
-
-
-
-<p>
-    The linear approximation approach builds on foundational work by Bolognani and Zampieri 
-    <span class="citation">[1]</span> and extends the convex optimization framework 
-    described by Taylor <span class="citation">[2]</span>.
-</p>
-
-<style>
-    .citation {
-        vertical-align: super;
-        font-size: 0.8em;
-        color: var(--primary);
-    }
-</style>
-
-
-</div>
+      \begin{aligned}
+      & P_{min_g} \le p_g \le P_{max_g},\; g \in G \\
+      & Q_{min_g} \le q_g \le Q_{max_g},\; g \in G \\
+      & V_{min} \le u_n \le V_{max},\; n \in N \\
+      & u_n = 1,\; n \in N \\
+      & \theta_{slackbus} = \theta_0 \\
+      & p_{ij} = b_{ij}(u_i - u_j),\; i \in N,\; j \in M(i) \\
+      & q_{ij} = b_{ij}(θ_i - θ_j),\; i \in N,\; j \in M(i) \\
+      & \sum_{j \in M(i)} p_{ij} = p_i - D^p_i,\; i \in N \\
+      & \sum_{j \in M(i)} q_{ij} = q_i - D^q_i,\; i \in N \\
+      & -S_{ij} \le p_{ij} \le S_{ij} \\
+      & -S_{ij} \le q_{ij} \le S_{ij} \\
+      & p \ge 0
+      \end{aligned}
+    `, document.getElementById('decoupled-constraints'), { displayMode: true });
+  </script>
 </body>
 </html>

@@ -4,20 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>OPF Model Selection</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Montserrat:wght@600&display=swap" rel="stylesheet">
   <style>
     body {
       font-family: 'Roboto', sans-serif;
       background-color: #f5f7fa;
       margin: 0;
       padding: 0;
+      color: #333;
     }
 
     .navbar {
-      background: #4361ee;
+      background: #00a0b0;
       padding: 1rem 2rem;
       margin-bottom: 2rem;
-      border-radius: 8px;
+      border-radius: 0 0 10px 10px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
@@ -37,12 +38,13 @@
       margin: 2rem auto;
       padding: 2rem;
       background: white;
-      border-radius: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
     }
 
     h1 {
-      font-weight: 500;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
       margin-bottom: 1.5rem;
       color: #222;
       text-align: center;
@@ -56,6 +58,7 @@
       display: block;
       margin-bottom: 0.5rem;
       font-weight: 500;
+      color: #444;
     }
 
     select, input[type="file"] {
@@ -63,26 +66,61 @@
       padding: 0.75rem;
       font-size: 1rem;
       border: 1px solid #ccc;
-      border-radius: 6px;
+      border-radius: 8px;
       background: #fff;
+      transition: border-color 0.2s ease;
+    }
+
+    select:focus, input[type="file"]:focus {
+      border-color: #00a0b0;
+      outline: none;
     }
 
     button {
       display: block;
       width: 100%;
-      background-color: #4361ee;
-      color: white;
+      background-color: #edc951;
+      color: #000;
       padding: 0.75rem;
       font-size: 1rem;
-      font-weight: 500;
+      font-weight: 600;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: background 0.2s ease;
+      transition: background-color 0.3s ease, box-shadow 0.2s ease;
     }
 
     button:hover {
-      background-color: #364fc7;
+      background-color: #e3bc48;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Optional: color hints based on model (visual cue) */
+    select option[value="bolognani"] {
+      color: #cc2a36;
+    }
+
+    select option[value="btheta"] {
+      color: #4f372d;
+    }
+
+    select option[value="decoupled"] {
+      color: #00a0b0;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 1rem;
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 1.4rem;
+      }
+
+      button {
+        font-size: 0.95rem;
+      }
     }
   </style>
 </head>
@@ -108,12 +146,17 @@
           <option value="bolognani">Bolognani Model</option>
           <option value="btheta">BTheta Model</option>
           <option value="decoupled">Decoupled Model</option>
+          <option value="ac">AC Model</option>
         </select>
       </div>
 
-      <button type="submit">Run Analysis</button>
+      <button type="submit"> Run Analysis</button>
     </form>
   </div>
+  <p style="color: #444; font-size: 1rem;">
+      Access this app from other devices in your local network via:
+      <strong>http://{{local_ip}}:5000</strong>
+  </p>
 
 </body>
 </html>

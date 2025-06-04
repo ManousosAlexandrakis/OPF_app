@@ -2,6 +2,7 @@ import os
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory
 import subprocess
 from datetime import datetime
+import socket
 
 
 julia_executable_path = 'julia'  # Ensure Julia is in your PATH or provide the full path to the executable
@@ -20,7 +21,12 @@ os.makedirs(app.config['OUTPUT_FOLDER'], exist_ok=True)
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    # Get Local IP address
+    hostname = socket.gethostname()
+    local_ip = socket.gethostbyname(hostname)
+    return render_template('index.html', local_ip=local_ip)
+
+
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -32,7 +38,7 @@ def submit():
         if not file or not file.filename.endswith('.xlsx'):
             return redirect(url_for('index'))
         
-        if model_type not in ['bolognani', 'btheta', 'decoupled']:
+        if model_type not in ['bolognani', 'btheta', 'decoupled', 'ac']:
             return "Invalid model selected", 400
 
         # Save input file
@@ -49,7 +55,8 @@ def submit():
         model_scripts = {
             'bolognani': 'run_Bolognani_model.jl',
             'btheta': 'run_BTheta_model.jl',
-            'decoupled': 'run_Decoupled_model.jl'
+            'decoupled': 'run_Decoupled_model.jl',
+            'ac': 'run_AC_model.jl'
         }
 
         # Run the Julia model
@@ -58,6 +65,44 @@ def submit():
             capture_output=True,
             text=True
         )
+
+        # Extract solver status from Julia output
+        status_line = next(
+    (line for line in result.stdout.splitlines() if "status:" in line.lower()),
+    None
+)
+        status = "Unknown"  # Default if nothing matches
+
+        if status_line:
+            status_upper = status_line.upper()
+            if "OPTIMAL" in status_upper:
+                status = "Optimal"
+            elif "INFEASIBLE" in status_upper:
+                status = "Infeasible"
+            elif "LOCALLY_SOLVED" in status_upper:
+                status = "Locally Solved"
+            elif "UNBOUNDED" in status_upper:
+                status = "Unbounded"
+            elif "TIME_LIMIT" in status_upper:
+                status = "Time Limit Reached"
+            elif "ITERATION_LIMIT" in status_upper:
+                status = "Iteration Limit Reached"
+            elif "MEMORY_LIMIT" in status_upper:
+                status = "Memory Limit Reached"
+            elif "OTHER_ERROR" in status_upper:
+                status = "Other Error"
+            elif "COMPUTATION_ERROR" in status_upper:
+                status = "Computation Error"
+            elif "INTERRUPTED" in status_upper:
+                status = "Interrupted"
+            elif "USER_LIMIT" in status_upper:
+                status = "Stopped by User Limit"
+            elif "NUMERICAL_ERROR" in status_upper:
+                status = "Numerical Error"
+            elif "INVALID_MODEL" in status_upper:
+                status = "Invalid Model"
+            else:
+                status = status_line.strip()  # fallback: keep raw line
 
         if result.returncode != 0:
             error_msg = f"Julia script failed:\n{result.stderr}"
@@ -69,13 +114,13 @@ def submit():
         return render_template(
             "result.html",
             output_filename=output_filename,
-            model_type=model_type.capitalize()
+            model_type=model_type.capitalize(),
+            status=status
         )
 
     except Exception as e:
         app.logger.error(f"Error in submit: {str(e)}")
         return f"An error occurred: {str(e)}", 500
-
 @app.route('/download/<filename>')
 def download(filename):
     try:

@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Power System Visualization</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Montserrat:wght@600&display=swap" rel="stylesheet">
 
   <style>
     body {
@@ -16,8 +16,14 @@
       color: #333;
     }
 
+    h1 {
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      margin-bottom: 1.5rem;
+    }
+
     .navbar {
-      background: #4361ee;
+      background: #00a0b0;
       padding: 1rem 2rem;
       margin-bottom: 2rem;
       border-radius: 8px;
@@ -35,23 +41,33 @@
       text-decoration: underline;
     }
 
-    h1 {
-      font-weight: 500;
-      margin-bottom: 1.5rem;
-    }
-
     .drop-zone {
-      border: 2px dashed #ccc;
+      border: 2px dashed #aaa;
       border-radius: 10px;
       padding: 2.5rem;
       text-align: center;
-      background: white;
+      background: #fffef9;
       transition: 0.3s ease;
+      color: #666;
+      cursor: pointer;
     }
 
     .drop-zone.highlight {
-      border-color: #4361ee;
-      background-color: #eef3ff;
+      border-color: #00a0b0;
+      background-color: #e0f7fa;
+    }
+
+    .drop-zone p {
+      font-size: 1.1rem;
+    }
+
+    .file-upload-btn {
+      background-color: #edc951;
+      color: #000;
+      padding: 0.5rem 1rem;
+      display: inline-block;
+      border-radius: 6px;
+      cursor: pointer;
     }
 
     .drop-zone input[type="file"] {
@@ -67,25 +83,26 @@
 
     select, button {
       padding: 0.6rem 1.2rem;
-      border-radius: 6px;
+      border-radius: 8px;
       font-size: 1rem;
+      border: 1px solid #ccc;
+      transition: all 0.2s ease;
     }
 
     select {
-      border: 1px solid #ccc;
       background: white;
     }
 
     button {
-      background: #4361ee;
+      background: #00a0b0;
       color: white;
       border: none;
       cursor: pointer;
-      transition: background 0.2s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
 
     button:hover {
-      background: #364fc7;
+      background: #008a98;
     }
 
     .file-list {
@@ -111,10 +128,10 @@
       height: 500px;
       width: 100%;
       margin: 2rem 0;
-      background: white;
+      background: linear-gradient(to bottom, #ffffff, #f9fafc);
       padding: 1rem;
       border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.05);
     }
 
     .plot-controls {
@@ -163,6 +180,21 @@
       width: 150px;
       margin: 0 10px;
     }
+
+    @media (max-width: 768px) {
+      .controls {
+        flex-direction: column;
+      }
+
+      .control-group {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .chart-container {
+        height: 300px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -174,13 +206,14 @@
 
   <h1>OPF Results Visualization</h1>
 
-<div class="drop-zone" id="dropZone">
-  <p><strong>Drag & drop</strong> OPF result files here (Bolognani, BTheta, or Decoupled)</p>
-  <p>or</p>
-  <label for="fileInput" class="file-upload-btn">📁 Choose Files</label>
-  <input type="file" id="fileInput" multiple accept=".xlsx" hidden>
-</div>
-<div id="fileNameDisplay" style="margin-top: 10px; font-size: 0.95rem;"></div>
+  <div class="drop-zone" id="dropZone">
+    <p><strong>Drag & drop</strong> OPF result files here (Bolognani, BTheta, or Decoupled)</p>
+    <p>or</p>
+    <label for="fileInput" class="file-upload-btn">📁 Choose Files</label>
+    <input type="file" id="fileInput" multiple accept=".xlsx" hidden>
+  </div>
+
+  <div id="fileNameDisplay" style="margin-top: 10px; font-size: 0.95rem;"></div>
 
   <div class="controls">
     <select id="plotType">
@@ -190,8 +223,8 @@
       <option value="voltage_angle">Voltage Angle</option>
       <option value="price">Nodal Prices</option>
     </select>
-    <button id="plotBtn">Generate Plot</button>
-    <button id="clearBtn">Clear All</button>
+    <button id="plotBtn">📊 Generate Plot</button>
+    <button id="clearBtn">🧹 Clear All</button>
   </div>
 
   <div class="file-list" id="fileList"></div>

@@ -278,8 +278,10 @@ flows_df = DataFrame(
 # println("Active power flows for lines [p.u.]:")
 # println(flows_df)
 
-# println("Termination Status:", termination_status(model))
 
 # # Results Stored in an Excel File
-#XLSX.writetable("C:\\Users\\alexa\\OneDrive\\Υπολογιστής\\Διπλωματική\\Διπλωματική Κώδικας\\Thesis_Writing\\Results\\BTheta_ehv1.xlsx", "flows"=> flows_df, "results" => results_df, "production" => production_df, "price" => price_df)
-XLSX.writetable(output_path, "Results" => results_df , "Production" => production_df ,  "Price" => price_df,"Flows"=> flows_df)   
+#XLSX.writetable(output_path, "Results" => results_df , "Production" => production_df ,  "Price" => price_df,"Flows"=> flows_df)   
+
+status = termination_status(model)
+println("Optimization completed with status: ", status)
+println("Results saved to: ", output_file)

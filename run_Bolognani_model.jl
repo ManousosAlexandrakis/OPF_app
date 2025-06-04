@@ -292,13 +292,13 @@ end
 
 ### Create a mathematical optimization model using the Gurobi Optimizer as the solver
 
-# GUROBI_ENV = Gurobi.Env()
-# model = Model(() -> Gurobi.Optimizer(GUROBI_ENV))
-# set_optimizer_attribute(model, "MIPGap", 0.0) 
-# set_silent(model)
-model = Model(GLPK.Optimizer)
-set_optimizer_attribute(model, "msg_lev", 1)  # Basic logging
-set_optimizer_attribute(model, "tm_lim", 300000) 
+ GUROBI_ENV = Gurobi.Env()
+ model = Model(() -> Gurobi.Optimizer(GUROBI_ENV))
+ set_optimizer_attribute(model, "MIPGap", 0.0) 
+ set_silent(model)
+# model = Model(GLPK.Optimizer)
+# set_optimizer_attribute(model, "msg_lev", 1)  # Basic logging
+# set_optimizer_attribute(model, "tm_lim", 300000) 
 
 ### Variables
 
@@ -496,7 +496,6 @@ flows_df = DataFrame(
 # println("Active and reactive power injections [p.u.]:")
 # println(PowerInjection_df)
 # println("")
-println("Termination Status:", termination_status(model))
 
 
 # # Results stored in an XLSX file
@@ -518,7 +517,9 @@ XLSX.writetable(output_file,
     "Power_Injection" => PowerInjection_df
 )
 
+status = termination_status(model)
+println("Optimization completed with status: ", status)
 println("Results saved to: ", output_file)
-println("Termination Status:", termination_status(model))
+
 
 
