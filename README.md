@@ -58,7 +58,6 @@ Make sure you have Python 3.8+ installed.
 
 #### Install required Python packages:
 
-Make sure you have Python 3.8+ installed.
 
 ```bash
 pip install flask
@@ -72,7 +71,7 @@ Start Julia in the terminal:
 
 Then in the Julia REPL, enter package mode (press ]) and run:
 ```julia
-add JuMP Gurobi XLSX DataFrames
+add JuMP Gurobi XLSX DataFrames Ipopt
 ```
 
  ### 2. Run the Application
