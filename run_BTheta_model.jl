@@ -280,8 +280,8 @@ flows_df = DataFrame(
 
 
 # # Results Stored in an Excel File
-#XLSX.writetable(output_path, "Results" => results_df , "Production" => production_df ,  "Price" => price_df,"Flows"=> flows_df)   
+XLSX.writetable(output_path, "Results" => results_df , "Production" => production_df ,  "Price" => price_df,"Flows"=> flows_df)   
 
 status = termination_status(model)
 println("Optimization completed with status: ", status)
-println("Results saved to: ", output_file)
+#println("Results saved to: ", output_file)

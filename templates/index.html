@@ -134,8 +134,7 @@
 
   <div class="container">
     <h1>Run OPF Analysis</h1>
-    <form action="/submit" method="post" enctype="multipart/form-data">
-      <div class="form-group">
+<form id="opfForm" action="/submit" method="post" enctype="multipart/form-data">      <div class="form-group">
         <label for="file">Input Excel File:</label>
         <input type="file" id="file" name="file" accept=".xlsx" required>
       </div>
@@ -157,6 +156,17 @@
       Access this app from other devices in your local network via:
       <strong>http://{{local_ip}}:5000</strong>
   </p>
+<!-- Spinner -->
+<div id="spinner" style="display:none; text-align:center; margin-top: 2rem;">
+  <img src="https://i.gifer.com/ZZ5H.gif" width="60" alt="Loading..." />
+  <p style="margin-top: 0.5rem; color: #555;">Running OPF model, please wait...</p>
+</div>
 
+<script>
+  const form = document.querySelector('form');
+  form.addEventListener('submit', function () {
+    document.getElementById('spinner').style.display = 'block';
+  });
+</script>
 </body>
 </html>
