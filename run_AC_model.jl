@@ -228,7 +228,7 @@ PQ_buses = filter(bus -> !(bus in PV_buses), Nodes)
 
 for k in Nodes
     if k != slack_bus
-        @constraint(model,  0.8 <= V[k] <= 1.2) 
+        @constraint(model,  0.95 <= V[k] <= 1.05) 
     end
 end
 

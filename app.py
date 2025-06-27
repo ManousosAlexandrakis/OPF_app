@@ -3,13 +3,20 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 import subprocess
 from datetime import datetime
 import socket
+import shutil
 
 
-julia_executable_path = 'julia'  # Ensure Julia is in your PATH or provide the full path to the executable
+#julia_executable_path = 'julia'  # Ensure Julia is in your PATH or provide the full path to the executable
 # Full path example
 # julia_executable_path = 'C:\\Users\\admin\\AppData\\Local\\Programs\\Julia-1.11.5\\bin\\julia.exe'
+julia_executable_path = shutil.which("julia")
 
-
+if julia_executable_path is None:
+    raise FileNotFoundError("Julia executable not found in PATH.")
+else:
+    print(f"Julia executable found at: {julia_executable_path}")
+    
+    
 # Initialize Flask application
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'

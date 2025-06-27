@@ -325,8 +325,8 @@ end
 @constraint(model, UpperBound2[i in Upward_set], production[i] >= minQ[i])
 
 # # Voltage magnitude limits for all buses except the slack bus
-@constraint(model,LowerBoundV[k in K_L_buses] ,0.8 <= V[k] ) 
-@constraint(model,UpperBoundV[k in K_L_buses] , V[k] <= 1.2) 
+@constraint(model,LowerBoundV[k in K_L_buses] ,0.95 <= V[k] ) 
+@constraint(model,UpperBoundV[k in K_L_buses] , V[k] <= 1.05) 
 
 
 # # Power Balance for each node

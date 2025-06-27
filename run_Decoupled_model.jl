@@ -229,10 +229,10 @@ set_silent(model)
 # Voltage for slack_bus is considered 1
 @constraint(model, V[slack_bus] == 1)
 
-# Voltage magnitude limits 0.8 <= V <= 1.2
+# Voltage magnitude limits 0.95 <= V <= 1.05
 for k in Nodes 
     if k != slack_bus
-        @constraint(model, 0.8 <= V[k] <= 1.2)         
+        @constraint(model, 0.95 <= V[k] <= 1.05)         
     end
 end
 
