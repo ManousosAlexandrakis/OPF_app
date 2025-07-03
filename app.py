@@ -4,6 +4,7 @@ import subprocess
 from datetime import datetime
 import socket
 import shutil
+import sys
 
 
 #julia_executable_path = 'julia'  # Ensure Julia is in your PATH or provide the full path to the executable
@@ -12,9 +13,25 @@ import shutil
 julia_executable_path = shutil.which("julia")
 
 if julia_executable_path is None:
-    raise FileNotFoundError("Julia executable not found in PATH.")
+    print("Julia executable not found in PATH.")
 else:
     print(f"Julia executable found at: {julia_executable_path}")
+    
+def find_julia_in_path():
+    if julia_executable_path is None:
+        print("Please specify the full path to your Julia executable manually in the script.")
+        print("1. Press Windows Key ")
+        print("2. Type: julia")
+        print("3. Right-click on the Julia app → Click 'Open file location'")
+        print("4. In the Explorer window, right-click the shortcut → 'Open file location' again.")
+        print("5. Now you're in the folder where julia.exe lives. The path should look like this:")
+        print("   `C:\\Users\\<YourName>\\AppData\\Local\\Programs\\Julia-1.11.5\\bin\\julia.exe`\n")
+        print("6. Then update the script like this:")
+        print("  julia_executable_path = r'C:\\Path\\To\\Julia\\bin\\julia.exe'  # for Windows")
+        print("  julia_executable_path = '/usr/local/bin/julia'  # for macOS/Linux\n")
+        sys.exit("")
+
+find_julia_in_path()
     
     
 # Initialize Flask application
