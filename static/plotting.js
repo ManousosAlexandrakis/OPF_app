@@ -94,36 +94,36 @@ function removeFile(index) {
     updateFileList();
 }
 
-// Data extraction functions
-function extractACData(workbook, plotType) {
+// Data extraction functions - updated for new standardized format
+function extractStandardData(workbook, plotType, modelType) {
     try {
-        let sheetName, valueColumn, busColumn;
+        let sheetName, valueColumn;
         
         switch(plotType) {
             case 'active_power':
-                sheetName = 'prod';
-                valueColumn = 'p';
-                busColumn = 'bus';
+                sheetName = 'Production';
+                valueColumn = 'p_pu';
                 break;
             case 'reactive_power':
-                sheetName = 'reactive';
-                valueColumn = 'q_pu';
-                busColumn = 'bus';
+                // Check if model has reactive power sheet (Bolognani, Decoupled, AC)
+                if (['bolognani', 'decoupled', 'ac'].includes(modelType)) {
+                    sheetName = 'Reactive';
+                    valueColumn = 'q_pu';
+                } else {
+                    return null;
+                }
                 break;
             case 'voltage':
-                sheetName = 'bus';
+                sheetName = 'Results';
                 valueColumn = 'vm_pu';
-                busColumn = 'Bus';
                 break;
             case 'voltage_angle':
-                sheetName = 'bus';
-                valueColumn = 'va_degree';
-                busColumn = 'Bus';
+                sheetName = 'Results';
+                valueColumn = 'va_degrees';
                 break;
             case 'price':
                 sheetName = 'LMP';
-                valueColumn = 'node_price';
-                busColumn = 'bus';
+                valueColumn = 'nodal_price_euro/MWh';
                 break;
             default:
                 return null;
@@ -131,111 +131,22 @@ function extractACData(workbook, plotType) {
 
         const sheet = workbook.Sheets[sheetName];
         if (!sheet) {
-            console.warn(`AC Model: No '${sheetName}' sheet found`);
+            console.warn(`No '${sheetName}' sheet found for ${modelType} model`);
             return null;
         }
 
         const data = XLSX.utils.sheet_to_json(sheet);
-        const actualBusColumn = data.some(row => busColumn in row) ? busColumn : 
-                               busColumn === 'Bus' ? 'bus' : 'Bus';
         
-        return data.map(row => ({
-            bus: row[actualBusColumn].toString(),
-            value: row[valueColumn] !== undefined ? parseFloat(row[valueColumn]) : null
-        })).filter(item => item.value !== null);
-        
-    } catch (e) {
-        console.error(`Error extracting AC model data for ${plotType}:`, e);
-        return null;
-    }
-}
-
-function extractBolognaniData(workbook, plotType) {
-    try {
-        let sheetName, valueColumn;
-        
-        switch(plotType) {
-            case 'active_power':
-                sheetName = 'Production';
-                valueColumn = 'production';
-                break;
-            case 'reactive_power':
-                sheetName = 'Reactive_Production';
-                valueColumn = 'q_pu';
-                break;
-            case 'voltage':
-                sheetName = 'Results';
-                valueColumn = 'vm_pu';
-                break;
-            case 'voltage_angle':
-                sheetName = 'Results';
-                valueColumn = 'va_degree';
-                break;
-            case 'price':
-                sheetName = 'Price';
-                valueColumn = 'price';
-                break;
-            default:
-                return null;
-        }
-
-        const sheet = workbook.Sheets[sheetName];
-        if (!sheet) return null;
-
-        const data = XLSX.utils.sheet_to_json(sheet);
-        const busColumn = data.some(row => 'bus' in row) ? 'bus' : 'Bus';
+        // Handle potential case differences in column names
+        const busColumn = Object.keys(data[0] || {}).find(key => 
+            key.toLowerCase() === 'bus'
+        ) || 'Bus';
         
         return data.map(row => ({
             bus: row[busColumn].toString(),
             value: row[valueColumn] !== undefined ? parseFloat(row[valueColumn]) : null
         })).filter(item => item.value !== null);
-
-    } catch (e) {
-        console.error(`Error extracting Bolognani model data for ${plotType}:`, e);
-        return null;
-    }
-}
-
-function extractTraditionalData(workbook, plotType, modelType) {
-    try {
-        let sheetName, valueColumn;
         
-        switch(plotType) {
-            case 'active_power':
-                sheetName = 'Production';
-                valueColumn = 'production';
-                break;
-            case 'reactive_power':
-                sheetName = 'Production';
-                valueColumn = 'q';
-                break;
-            case 'voltage':
-                sheetName = 'Results';
-                valueColumn = 'V_pu';
-                break;
-            case 'voltage_angle':
-                sheetName = 'Results';
-                valueColumn = 'Delta';
-                break;
-            case 'price':
-                sheetName = 'Price';
-                valueColumn = 'node_price';
-                break;
-            default:
-                return null;
-        }
-
-        const sheet = workbook.Sheets[sheetName];
-        if (!sheet) return null;
-
-        const data = XLSX.utils.sheet_to_json(sheet);
-        const busColumn = data.some(row => 'Bus' in row) ? 'Bus' : 'bus';
-        
-        return data.map(row => ({
-            bus: row[busColumn].toString(),
-            value: row[valueColumn] !== undefined ? parseFloat(row[valueColumn]) : null
-        })).filter(item => item.value !== null);
-
     } catch (e) {
         console.error(`Error extracting ${modelType} model data for ${plotType}:`, e);
         return null;
@@ -243,17 +154,8 @@ function extractTraditionalData(workbook, plotType, modelType) {
 }
 
 function extractPlotData(workbook, modelType, plotType) {
-    switch(modelType) {
-        case 'ac':
-            return extractACData(workbook, plotType);
-        case 'bolognani':
-            return extractBolognaniData(workbook, plotType);
-        case 'btheta':
-        case 'decoupled':
-            return extractTraditionalData(workbook, plotType, modelType);
-        default:
-            return null;
-    }
+    // All models now use the same standardized format
+    return extractStandardData(workbook, plotType, modelType);
 }
 
 // Plot generation
@@ -294,12 +196,12 @@ function generatePlot(plotType = 'active_power') {
         });
 
         const datasetConfig = {
-    label: file.model === "ac" ? "AC" : file.model.charAt(0).toUpperCase() + file.model.slice(1),
-    backgroundColor: getModelColor(file.model),
-    borderColor: getModelColor(file.model),
-    borderWidth: 2,
-    data: sortedBusNumbers.map(bus => dataMap[bus] ?? null)
-};
+            label: file.model === "ac" ? "AC" : file.model.charAt(0).toUpperCase() + file.model.slice(1),
+            backgroundColor: getModelColor(file.model),
+            borderColor: getModelColor(file.model),
+            borderWidth: 2,
+            data: sortedBusNumbers.map(bus => dataMap[bus] ?? null)
+        };
 
         if (plotType === 'voltage' || plotType === 'voltage_angle' || plotType === 'price') {
             Object.assign(datasetConfig, {
@@ -331,11 +233,11 @@ function generatePlot(plotType = 'active_power') {
         : 'bar';
 
     const yAxisTitle = {
-        'active_power': 'Active Power (MW)',
-        'reactive_power': 'Reactive Power (MVAr)',
+        'active_power': 'Active Power (pu)',
+        'reactive_power': 'Reactive Power (pu)',
         'voltage': 'Voltage Magnitude (pu)',
         'voltage_angle': 'Voltage Angle (degrees)',
-        'price': 'Price ($/MWh)'
+        'price': 'Price (€/MWh)'
     }[plotType];
 
     const chartTitle = {
@@ -343,7 +245,7 @@ function generatePlot(plotType = 'active_power') {
         'reactive_power': 'Reactive Power Production Comparison',
         'voltage': 'Voltage Magnitude Comparison',
         'voltage_angle': 'Voltage Angle Comparison',
-        'price': 'Nodal Price Comparison ($/MWh)'
+        'price': 'Nodal Price Comparison (€/MWh)'
     }[plotType];
 
     currentChart = new Chart(chartCanvas, {
@@ -380,7 +282,7 @@ function generatePlot(plotType = 'active_power') {
                     },
                     ticks: {
                         callback: function(value) {
-                            if (plotType === 'price') return '$' + value.toFixed(2);
+                            if (plotType === 'price') return '€' + value.toFixed(2);
                             if (plotType === 'reactive_power') return parseFloat(value.toFixed(3));
                             return value;
                         }
@@ -399,15 +301,15 @@ function generatePlot(plotType = 'active_power') {
                         label: function(context) {
                             const value = context.raw ?? context.parsed?.y ?? 'N/A';
                             const unit = {
-                                'active_power': 'MW',
-                                'reactive_power': 'MVAr',
+                                'active_power': 'pu',
+                                'reactive_power': 'pu',
                                 'voltage': 'pu',
                                 'voltage_angle': '°',
-                                'price': '$/MWh'
+                                'price': '€/MWh'
                             }[plotType];
 
                             const formatted = value !== 'N/A'
-                                ? (plotType === 'price' ? `$${value.toFixed(2)}` : value.toFixed(2))
+                                ? (plotType === 'price' ? `€${value.toFixed(2)}` : value.toFixed(3))
                                 : 'N/A';
 
                             return `${context.dataset.label}: ${formatted} ${unit}`;

@@ -3,37 +3,8 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 import subprocess
 from datetime import datetime
 import socket
-import shutil
 import sys
 
-
-#julia_executable_path = 'julia'  # Ensure Julia is in your PATH or provide the full path to the executable
-# Full path example
-# julia_executable_path = 'C:\\Users\\admin\\AppData\\Local\\Programs\\Julia-1.11.5\\bin\\julia.exe'
-julia_executable_path = shutil.which("julia")
-
-if julia_executable_path is None:
-    print("Julia executable not found in PATH.")
-else:
-    print(f"Julia executable found at: {julia_executable_path}")
-    
-def find_julia_in_path():
-    if julia_executable_path is None:
-        print("Please specify the full path to your Julia executable manually in the script.")
-        print("1. Press Windows Key ")
-        print("2. Type: julia")
-        print("3. Right-click on the Julia app → Click 'Open file location'")
-        print("4. In the Explorer window, right-click the shortcut → 'Open file location' again.")
-        print("5. Now you're in the folder where julia.exe lives. The path should look like this:")
-        print("   `C:\\Users\\<YourName>\\AppData\\Local\\Programs\\Julia-1.11.5\\bin\\julia.exe`\n")
-        print("6. Then update the script like this:")
-        print("  julia_executable_path = r'C:\\Path\\To\\Julia\\bin\\julia.exe'  # for Windows")
-        print("  julia_executable_path = '/usr/local/bin/julia'  # for macOS/Linux\n")
-        sys.exit("")
-
-find_julia_in_path()
-    
-    
 # Initialize Flask application
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -49,8 +20,6 @@ def index():
     hostname = socket.gethostname()
     local_ip = socket.gethostbyname(hostname)
     return render_template('index.html', local_ip=local_ip)
-
-
 
 @app.route('/submit', methods=['POST'])
 def submit():
@@ -75,61 +44,44 @@ def submit():
         output_filename = f"results_{model_type}_{timestamp}.xlsx"
         output_path = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
 
-        # Map model types to Julia scripts
+        # Map model types to scripts
         model_scripts = {
-            'bolognani': 'run_Bolognani_model.jl',
-            'btheta': 'run_BTheta_model.jl',
-            'decoupled': 'run_Decoupled_model.jl',
-            'ac': 'run_AC_model.jl'
+            'btheta': 'run_BTheta_model.py',
+            # Add other Python models here when you implement them:
+            'bolognani': 'run_Bolognani_model.py',
+            'decoupled': 'run_Decoupled_model.py',
+            'ac': 'run_AC_model.py'
         }
 
-        # Run the Julia model
+        if model_type not in model_scripts:
+            return "Model not yet implemented in Python", 400
+
+        # Run the Python model
         result = subprocess.run(
-            [julia_executable_path, model_scripts[model_type], input_path, output_path],
+            [sys.executable, model_scripts[model_type], input_path, output_path],
             capture_output=True,
             text=True
         )
 
-        # Extract solver status from Julia output
+        # Extract solver status from output
         status_line = next(
-    (line for line in result.stdout.splitlines() if "status:" in line.lower()),
-    None
-)
+            (line for line in result.stdout.splitlines() if "status:" in line.lower()),
+            None
+        )
         status = "Unknown"  # Default if nothing matches
 
         if status_line:
-            status_upper = status_line.upper()
-            if "OPTIMAL" in status_upper:
+            status = status_line.strip()
+            # Simplify status extraction since Python model returns clean status
+            if "optimal" in status.lower():
                 status = "Optimal"
-            elif "INFEASIBLE" in status_upper:
+            elif "infeasible" in status.lower():
                 status = "Infeasible"
-            elif "LOCALLY_SOLVED" in status_upper:
-                status = "Locally Solved"
-            elif "UNBOUNDED" in status_upper:
-                status = "Unbounded"
-            elif "TIME_LIMIT" in status_upper:
-                status = "Time Limit Reached"
-            elif "ITERATION_LIMIT" in status_upper:
-                status = "Iteration Limit Reached"
-            elif "MEMORY_LIMIT" in status_upper:
-                status = "Memory Limit Reached"
-            elif "OTHER_ERROR" in status_upper:
-                status = "Other Error"
-            elif "COMPUTATION_ERROR" in status_upper:
-                status = "Computation Error"
-            elif "INTERRUPTED" in status_upper:
-                status = "Interrupted"
-            elif "USER_LIMIT" in status_upper:
-                status = "Stopped by User Limit"
-            elif "NUMERICAL_ERROR" in status_upper:
-                status = "Numerical Error"
-            elif "INVALID_MODEL" in status_upper:
-                status = "Invalid Model"
             else:
-                status = status_line.strip()  # fallback: keep raw line
+                status = status.split(":")[-1].strip()
 
         if result.returncode != 0:
-            error_msg = f"Julia script failed:\n{result.stderr}"
+            error_msg = f"Python script failed:\n{result.stderr}"
             return error_msg, 500
 
         if not os.path.exists(output_path):
@@ -145,6 +97,7 @@ def submit():
     except Exception as e:
         app.logger.error(f"Error in submit: {str(e)}")
         return f"An error occurred: {str(e)}", 500
+
 @app.route('/download/<filename>')
 def download(filename):
     try:
@@ -165,12 +118,9 @@ def theory():
 def plotting():
     return render_template("plotting.html")
 
-# Add this to serve static files (if not already present)
 @app.route('/static/<path:filename>')
 def static_files(filename):
     return send_from_directory('static', filename)
-
-
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
