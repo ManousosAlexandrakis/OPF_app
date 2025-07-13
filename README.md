@@ -1,78 +1,81 @@
 # Optimal Power Flow Platform
 
-This is a web-based application designed to run **three linear models** of the Optimal Power Flow (OPF) problem. The app allows users to:
 
-- Upload input data files (e.g., Excel format)
-- Run different linear OPF models implemented in Julia
-- View and download plots of results
-- Explore the underlying mathematical formulation of each model
+## About This Project
+
+This web application provides a **user-friendly interface** for running the Optimal Power Flow models developed in the original research repository:  
+[Linear Approximation OPF Repository](https://github.com/ManousosAlexandrakis/Linear_Approximation_OPF.git)
+
+Key improvements over the original implementation:
+- **Web-based GUI** - No command-line usage required
+- **Built-in visualization** - Immediate graphical results
+- **Python implementation** - Easier deployment than Julia
+- **All models in one place** - Unified interface for all three linear formulations
+- **Simplified data handling** - Direct Excel file support
+
+While the original repository contains the theoretical foundations and Julia implementations, this application offers:
+- Enhanced usability for non-programmers
+- Comparison/Plotting tools across different models
+
+
+## Key Features
+
+- **Model Execution**:
+  - B-Theta linear model
+  - Bolognani linear approximation
+  - Decoupled linear model
+- **Data Handling**:
+  - Excel file input support
+  - Results visualization
+  - Downloadable outputs
+- **Educational Resources**:
+  - Mathematical formulation documentation
+
+
+For the original Julia implementations and theoretical background, visit:  
+[Linear Approximation OPF Repository](https://github.com/ManousosAlexandrakis/Linear_Approximation_OPF.git)
+
+## Installation Guide
+
+### Prerequisites
+
+- Python 3.8+
+- Required solvers:
+  - Gurobi (recommended)
+  - IPOPT (alternative)
+
+### Quick Setup
+
+1. **Clone or download** the repository
+2. **Install dependencies**:
+   ```bash
+   pip install -r requirements.txt
 
 ## Project Structure
-
- - app.py                # Main Flask application
- 
-- templates/            # HTML templates 
-
-- static/               # CSS, JS, images
-
-- uploads/              # Folder for user-uploaded files
-
-- output/               # Folder for generated results
-
-- run_BTheta_model.jl   # Julia script for B-Theta model
-
-- run_Bolognani_model.jl # Julia script for Bolognani model
-
-- run_Decoupled_model.jl # Julia script for Decoupled model
-
-## Getting Started
-
-#### Clone the Repository
-
-```bash```
-
-```bash
-git clone https://github.com/ManousosAlexandrakis/OPF_app.git
-cd OPF_app
 ```
-
-In the app.py file you have to write the executable path of Julia.
-
-```python
-julia_executable_path = 'julia'  # Ensure Julia is in your PATH or provide the full path to the executable
-# Full path example
-# julia_executable_path = 'C:\\Users\\admin\\AppData\\Local\\Programs\\Julia-1.11.5\\bin\\julia.exe'
-```
-
-To find the path to julia executable you can run the following command to a command prompt:
-
-```bash
-where /r C:\ julia.exe
+opf-platform/
+├── app.py                     # Flask application entry point
+├── requirements.txt           # Python dependencies
+├── run_BTheta_model.py        # B-Theta model implementation
+├── run_Bolognani_model.py     # Bolognani model implementation
+├── run_Decoupled_model.py     # Decoupled model implementation
+├── uploads/                   # User uploads storage
+├── output/                    # Generated results
+├── static/                    # Static assets (JS/CSS/images)
+│   ├── plotting.js            # Visualization logic
+│   └── style.css              # Application styles
+└── templates/                 # HTML templates
+    ├── index.html             # Main interface
+    ├── plotting.html          # Results visualization
+    ├── result.html            # Results display
+    └── theory.html            # Mathematical documentation
 ```
 
 ---
 
-### 1. Python and Julia Setup
-
-Make sure you have Python 3.8+ installed.
-
-#### Install required Python packages:
 
 
-```bash
-pip install flask
-```
 
-
-#### Install required Julia packages:
-Make sure you have Julia installed (version 1.8 or later recommended).
-
-Start Julia in the terminal:
-
-Then in the Julia REPL, enter package mode (press ]) and run:
-```julia
-add JuMP Gurobi XLSX DataFrames Ipopt
-```
 
  ### 2. Run the Application
 
