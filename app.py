@@ -100,7 +100,7 @@ def submit():
         if not os.path.exists(output_path):
             return "Output file was not created", 500
         
-                # Read the Excel file to pass data to template
+        # Read the Excel file to pass data to template
         excel_data = pd.ExcelFile(output_path)
         
         # Prepare data for each sheet (first 10 rows)
@@ -151,9 +151,4 @@ def plotting():
 def static_files(filename):
     return send_from_directory('static', filename)
 
-if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
-
-# if __name__ == '__main__':
-#     # Let Streamlit handle the server instead
-#     pass  # Or add Streamlit-specific logic
+# Remove the app.run() block completely for Gunicorn deployment
