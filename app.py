@@ -4,6 +4,7 @@ import subprocess
 from datetime import datetime
 import socket
 import sys
+import pandas as pd
 
 # Initialize Flask application
 app = Flask(__name__)
@@ -98,13 +99,28 @@ def submit():
 
         if not os.path.exists(output_path):
             return "Output file was not created", 500
+        
+                # Read the Excel file to pass data to template
+        excel_data = pd.ExcelFile(output_path)
+        
+        # Prepare data for each sheet (first 10 rows)
+        preview_data = {
+            'results_data': excel_data.parse('Results').head(100).to_dict('records'),
+            'production_data': excel_data.parse('Production').head(100).to_dict('records'),
+            'price_data': excel_data.parse('LMP').head(100).to_dict('records')
+        }
+
+        # Add reactive data if sheet exists and model supports it
+        if model_type.lower() in ['bolognani', 'decoupled', 'ac']:
+            preview_data['reactive_data'] = excel_data.parse('Reactive').head(100).to_dict('records')
 
         return render_template(
             "result.html",
             output_filename=output_filename,
             model_type=model_type.capitalize(),
             solver=solver.upper(),
-            status=status
+            status=status,
+            **preview_data
         )
 
     except Exception as e:
