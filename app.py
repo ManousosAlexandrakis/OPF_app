@@ -27,12 +27,19 @@ def submit():
         # Get form data
         file = request.files.get('file')
         model_type = request.form.get('model')
+        solver = request.form.get('solver', 'gurobi')  # Default to Gurobi if not specified
         
         if not file or not file.filename.endswith('.xlsx'):
             return redirect(url_for('index'))
         
         if model_type not in ['bolognani', 'btheta', 'decoupled', 'ac']:
             return "Invalid model selected", 400
+
+        # Handle solver selection
+        if model_type == 'ac':
+            solver = 'ipopt'  # Force IPOPT for AC model
+        elif solver not in ['gurobi', 'glpk']:
+            solver = 'gurobi'  # Default to Gurobi for linear models
 
         # Save input file
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -41,13 +48,12 @@ def submit():
         file.save(input_path)
 
         # Prepare output
-        output_filename = f"results_{model_type}_{timestamp}.xlsx"
+        output_filename = f"results_{model_type}_{solver}_{timestamp}.xlsx"
         output_path = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
 
         # Map model types to scripts
         model_scripts = {
             'btheta': 'run_BTheta_model.py',
-            # Add other Python models here when you implement them:
             'bolognani': 'run_Bolognani_model.py',
             'decoupled': 'run_Decoupled_model.py',
             'ac': 'run_AC_model.py'
@@ -56,11 +62,16 @@ def submit():
         if model_type not in model_scripts:
             return "Model not yet implemented in Python", 400
 
-        # Run the Python model
+        # Prepare environment with solver selection
+        env = os.environ.copy()
+        env['SOLVER'] = solver
+
+        # Run the Python model with the selected solver
         result = subprocess.run(
             [sys.executable, model_scripts[model_type], input_path, output_path],
             capture_output=True,
-            text=True
+            text=True,
+            env=env
         )
 
         # Extract solver status from output
@@ -72,16 +83,17 @@ def submit():
 
         if status_line:
             status = status_line.strip()
-            # Simplify status extraction since Python model returns clean status
             if "optimal" in status.lower():
                 status = "Optimal"
             elif "infeasible" in status.lower():
                 status = "Infeasible"
+            elif "unbounded" in status.lower():
+                status = "Unbounded"
             else:
                 status = status.split(":")[-1].strip()
 
         if result.returncode != 0:
-            error_msg = f"Python script failed:\n{result.stderr}"
+            error_msg = f"Python script failed with {solver} solver:\n{result.stderr}"
             return error_msg, 500
 
         if not os.path.exists(output_path):
@@ -91,6 +103,7 @@ def submit():
             "result.html",
             output_filename=output_filename,
             model_type=model_type.capitalize(),
+            solver=solver.upper(),
             status=status
         )
 

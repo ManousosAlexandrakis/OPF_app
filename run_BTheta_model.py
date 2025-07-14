@@ -3,11 +3,26 @@ import pandas as pd
 import numpy as np
 import sys
 from math import degrees as rad2deg
+import os
+
 
 def run_btheta_model(input_path, output_path):
     """Run BTheta model with input from Excel and save results to Excel"""
     
     try:
+        # Get solver from environment variable (default to gurobi)
+        solver_name = os.getenv('SOLVER', 'gurobi')
+        
+        # Set solver
+        solver = SolverFactory("gurobi")
+        # Set solver based on selection
+        if solver_name == 'gurobi':
+            solver = SolverFactory("gurobi")
+        elif solver_name == 'glpk':
+            solver = SolverFactory("glpk")
+        else:
+            raise ValueError(f"Unsupported solver for BTheta model: {solver_name}")
+
         ###### Data Handling ######
         def load_excel(filepath, sheet_name, fill_empty_values=True):
             output_dataframe = pd.read_excel(filepath, sheet_name=sheet_name)
@@ -181,10 +196,9 @@ def run_btheta_model(input_path, output_path):
         model.dual = Suffix(direction=Suffix.IMPORT)
 
         # Set solver
-        solver = SolverFactory("gurobi")
+        results = solver.solve(model, tee=True)
 
-        # Solve model
-        results = solver.solve(model, tee=False)
+
         
         # Check solution status
         if str(results.solver.status) != "ok":

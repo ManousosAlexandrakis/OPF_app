@@ -4,11 +4,24 @@ import numpy as np
 from pandas import DataFrame
 from math import degrees as rad2deg 
 from pyomo.opt import TerminationCondition
-import sys
+import sys, os
 
 def run_bolognani_model(input_path, output_path):
     """Run Bolognani model with input from Excel and save results to Excel"""    
     try:
+        
+        # Get solver from environment variable (default to gurobi)
+        solver_name = os.getenv('SOLVER', 'gurobi')
+        
+        # Set solver
+        solver = SolverFactory("gurobi")
+        # Set solver based on selection
+        if solver_name == 'gurobi':
+            solver = SolverFactory("gurobi")
+        elif solver_name == 'glpk':
+            solver = SolverFactory("glpk")
+        else:
+            raise ValueError(f"Unsupported solver for Bolognani model: {solver_name}")
         ###### Data Handling ######
         def load_excel(filepath,sheet_name, fill_empty_values = True):
             output_dataframe = pd.read_excel(filepath, sheet_name=sheet_name)
@@ -416,8 +429,6 @@ def run_bolognani_model(input_path, output_path):
         # Set up dual variables
         model.dual = Suffix(direction=Suffix.IMPORT)
 
-        # Set solver
-        solver = SolverFactory("gurobi")
 
         # Solve model
         results = solver.solve(model, tee=True)

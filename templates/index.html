@@ -6,6 +6,11 @@
   <title>OPF Model Selection</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500&family=Montserrat:wght@600&display=swap" rel="stylesheet">
   <style>
+    /* Add this new style for the solver dropdown */
+    .solver-group {
+      margin-bottom: 1.5rem;
+      display: none; /* Initially hidden */
+    }
     body {
       font-family: 'Roboto', sans-serif;
       background-color: #f5f7fa;
@@ -134,7 +139,8 @@
 
   <div class="container">
     <h1>Run OPF Analysis</h1>
-<form id="opfForm" action="/submit" method="post" enctype="multipart/form-data">      <div class="form-group">
+    <form id="opfForm" action="/submit" method="post" enctype="multipart/form-data">
+      <div class="form-group">
         <label for="file">Input Excel File:</label>
         <input type="file" id="file" name="file" accept=".xlsx" required>
       </div>
@@ -149,24 +155,57 @@
         </select>
       </div>
 
-      <button type="submit"> Run Analysis</button>
+      <div class="form-group solver-group" id="solverGroup">
+        <label for="solver">Select Solver:</label>
+        <select id="solver" name="solver">
+          <option value="gurobi">Gurobi (Recommended)</option>
+          <option value="glpk">GLPK (Alternative)</option>
+        </select>
+      </div>
+
+      <button type="submit">Run Analysis</button>
     </form>
   </div>
-  <p style="color: #444; font-size: 1rem;">
-      Access this app from other devices in your local network via:
-      <strong>http://{{local_ip}}:5000</strong>
-  </p>
-<!-- Spinner -->
-<div id="spinner" style="display:none; text-align:center; margin-top: 2rem;">
-  <img src="https://i.gifer.com/ZZ5H.gif" width="60" alt="Loading..." />
-  <p style="margin-top: 0.5rem; color: #555;">Running OPF model, please wait...</p>
-</div>
 
-<script>
-  const form = document.querySelector('form');
-  form.addEventListener('submit', function () {
-    document.getElementById('spinner').style.display = 'block';
-  });
-</script>
+  <!-- Rest of your existing content -->
+
+  <script>
+    const form = document.querySelector('form');
+    const modelSelect = document.getElementById('model');
+    const solverGroup = document.getElementById('solverGroup');
+    const solverSelect = document.getElementById('solver');
+
+    // Show/hide solver dropdown based on model selection
+    modelSelect.addEventListener('change', function() {
+      if (this.value === 'ac') {
+        solverGroup.style.display = 'none';
+        // For AC model, we'll force Ipopt in the backend
+      } else {
+        solverGroup.style.display = 'block';
+        // Reset to Gurobi when showing
+        solverSelect.value = 'gurobi';
+      }
+    });
+
+    // Initialize based on default selection
+    if (modelSelect.value === 'ac') {
+      solverGroup.style.display = 'none';
+    } else {
+      solverGroup.style.display = 'block';
+    }
+
+    form.addEventListener('submit', function() {
+      document.getElementById('spinner').style.display = 'block';
+      
+      // For AC model, force Ipopt regardless of selection
+      if (modelSelect.value === 'ac') {
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = 'solver';
+        hiddenInput.value = 'ipopt';
+        form.appendChild(hiddenInput);
+      }
+    });
+  </script>
 </body>
 </html>
