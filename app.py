@@ -151,9 +151,9 @@ def plotting():
 def static_files(filename):
     return send_from_directory('static', filename)
 
-# if __name__ == '__main__':
-#     app.run(debug=True, host='0.0.0.0', port=5000)
-
 if __name__ == '__main__':
-    # Let Streamlit handle the server instead
-    pass  # Or add Streamlit-specific logic
+    app.run(debug=True, host='0.0.0.0', port=5000)
+
+# if __name__ == '__main__':
+#     # Let Streamlit handle the server instead
+#     pass  # Or add Streamlit-specific logic
