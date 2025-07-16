@@ -16,7 +16,7 @@
     .navbar {
       background: #00a0b0;
       padding: 1rem 2rem;
-      margin-bottom: 2rem;
+      margin-bottom: 0.5rem;
       border-radius: 0 0 10px 10px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
@@ -34,8 +34,8 @@
 
     .container {
       max-width: 800px;
-      margin: 2rem auto;
-      padding: 2rem;
+      margin: 0.5rem auto;
+      padding: 1rem 2rem; 
       background: white;
       border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -44,7 +44,7 @@
     h1 {
       font-family: 'Montserrat', sans-serif;
       font-weight: 600;
-      margin-bottom: 1rem;
+      margin-bottom: 0.25rem;
       font-size: 1.8rem;
       color: #222;
       text-align: center;
@@ -199,8 +199,12 @@
   <div class="container">
     <h1>{{ model_type }} Results</h1>
     <div class="status-box">
-      Solver: {{ solver }} | Status: {{ status }}
-    </div>
+    <p>Solver: {{ solver }} | Termination: {{ termination_condition }} | Status: {{ solver_status }}</p>
+    {% if error %}
+      <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+</div>
 
     <div class="excel-preview">
       <div class="sheet-tabs">
@@ -209,7 +213,8 @@
         {% if model_type.lower() in ['bolognani', 'decoupled', 'ac'] %}
         <div class="sheet-tab" onclick="showSheet('reactive')">Reactive</div>
         {% endif %}
-        <div class="sheet-tab" onclick="showSheet('price')">Prices</div>
+        <div class="sheet-tab" onclick="showSheet('price')">LMP</div>
+        <div class="sheet-tab" onclick="showSheet('flows')">Flows</div>
       </div>
 
       <!-- Results Sheet -->
@@ -252,7 +257,7 @@
             <tbody>
               {% for row in production_data %}
               <tr>
-                <td>{{ row.bus }}</td>
+                <td>{{ row.Bus }}</td>
                 <td>{{ "%.4f"|format(row.p_pu) }}</td>
                 <td>{{ "%.2f"|format(row.pmin_pu) }}</td>
                 <td>{{ "%.2f"|format(row.pmax_pu) }}</td>
@@ -312,6 +317,40 @@
             </tbody>
           </table>
         </div>
+      </div>
+    </div>
+
+    <!-- Flows Sheet -->
+    <div id="flows-sheet" class="sheet-content">
+      <div class="table-container">
+        <table class="excel-table">
+          <thead>
+            <tr>
+              <th>Edge</th>
+              <th>From Bus</th>
+              <th>To Bus</th>
+              <th>Flow From (pu)</th>
+              <th>Flow To (pu)</th>
+              <th>Reactive From (pu)</th>
+              <th>Reactive To (pu)</th>
+              <th>Max Flow (pu)</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in flows_data %}
+            <tr>
+              <td>{{ row.Edge }}</td>
+              <td>{{ row.from_bus }}</td>
+              <td>{{ row.flows_to }}</td>
+              <td>{{ "%.4f"|format(row.Flows_p_pu_from) }}</td>
+              <td>{{ "%.4f"|format(row.Flows_p_pu_to) }}</td>
+              <td>{{ "%.4f"|format(row.Flows_q_pu_from) }}</td>
+              <td>{{ "%.4f"|format(row.Flows_q_pu_to) }}</td>
+              <td>{{ "%.4f"|format(row.Flowmax_pu) }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
     </div>
 

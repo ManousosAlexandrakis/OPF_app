@@ -430,14 +430,18 @@ def run_bolognani_model(input_path, output_path):
         model.dual = Suffix(direction=Suffix.IMPORT)
 
 
-        # Solve model
         results = solver.solve(model, tee=True)
+
+        print(f"solver_status: {results.solver.status}")
+        print(f"termination_condition: {results.solver.termination_condition}")
+
         
-        # Check solution status
-        if str(results.solver.status) != "ok":
-            return f"Solver failed with status: {results.solver.status}", False
-        if str(results.solver.termination_condition) not in ["optimal", "locallyOptimal"]:
-            return f"Solver terminated with condition: {results.solver.termination_condition}", False
+        # # Check solution  
+        # if str(results.solver.status) != "ok":
+        #     return f"Solver failed with status: {results.solver.status}", False
+        # if str(results.solver.termination_condition) not in ["optimal", "locallyOptimal"]:
+        #     return f"Solver terminated with condition: {results.solver.termination_condition}", False
+        
 
 
         results_df = DataFrame({
@@ -499,15 +503,19 @@ def run_bolognani_model(input_path, output_path):
 
 
 
-        # Save results to Excel with original sheet names
-        with pd.ExcelWriter(output_path, engine='xlsxwriter') as writer:
-            results_df.to_excel(writer, sheet_name="Results", index=False)
-            prod_df.to_excel(writer, sheet_name="Production", index=False)
-            Qreact_df.to_excel(writer,sheet_name="Reactive")
-            price_df.to_excel(writer, sheet_name="LMP", index=False)
-            flows_df.to_excel(writer, sheet_name="Flows", index=False)
+        # Only write Excel file if the termination condition is optimal
+        if results.solver.termination_condition in [TerminationCondition.optimal, TerminationCondition.locallyOptimal]:
             
-        return "status: Optimal", True
+            # Write Excel output file with results
+            with pd.ExcelWriter(output_path, engine='xlsxwriter') as writer:
+                results_df.to_excel(writer, sheet_name="Results", index=False)
+                prod_df.to_excel(writer, sheet_name="Production", index=False)
+                Qreact_df.to_excel(writer, sheet_name="Reactive")
+                price_df.to_excel(writer, sheet_name="LMP", index=False)
+                flows_df.to_excel(writer, sheet_name="Flows", index=False)
+
+            print("status: Optimal")
+            sys.exit(0)
 
     except Exception as e:
         print(f"Error in Bolognani model: {str(e)}")

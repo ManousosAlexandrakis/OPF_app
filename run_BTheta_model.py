@@ -55,7 +55,7 @@ def run_btheta_model(input_path, output_path):
         edges_index = Edges.index.tolist()
 
         # Create a dictionary to store the index of each bus
-        bus_id_to_index = {buses[i]: i for i in range(len(buses)-1)}
+        bus_id_to_index = {buses[i]: i for i in range(len(buses))}
         bus_id_to_index[slack_bus] = buses.index(slack_bus)
 
         # Create a dictionary mapping edges to FlowMax
@@ -198,13 +198,14 @@ def run_btheta_model(input_path, output_path):
         # Set solver
         results = solver.solve(model, tee=True)
 
-
+        print(f"solver_status: {results.solver.status}")
+        print(f"termination_condition: {results.solver.termination_condition}")
         
         # Check solution status
-        if str(results.solver.status) != "ok":
-            return f"Solver failed with status: {results.solver.status}", False
-        if str(results.solver.termination_condition) not in ["optimal", "locallyOptimal"]:
-            return f"Solver terminated with condition: {results.solver.termination_condition}", False
+        # if str(results.solver.status) != "ok":
+        #     return f"Solver failed with status: {results.solver.status}", False
+        # if str(results.solver.termination_condition) not in ["optimal", "locallyOptimal"]:
+        #     return f"Solver terminated with condition: {results.solver.termination_condition}", False
 
         # Create DataFrames for results
         prod_df = pd.DataFrame({
@@ -242,17 +243,20 @@ def run_btheta_model(input_path, output_path):
             "Flows_p_pu_to": [value(model.f[bus_id_to_index[Edges["to_bus"].iloc[i]], bus_id_to_index[Edges["from_bus"].iloc[i]]]) for i in range(Edges_leng)],
             "Flowmax_pu": [Flowmax_edge_dict[i] for i in range(len(Edges))]
         })
-
-        # Save results to Excel with multiple sheets
-        with pd.ExcelWriter(output_path, engine='xlsxwriter') as writer:
-            results_df.to_excel(writer, sheet_name="Results", index=False)
-            prod_df.to_excel(writer, sheet_name="Production", index=False)
-            price_df.to_excel(writer, sheet_name="LMP", index=False)
-            flows_df.to_excel(writer, sheet_name="Flows", index=False)
+        # Only write Excel file if the termination condition is optimal
+        if results.solver.termination_condition in [TerminationCondition.optimal, TerminationCondition.locallyOptimal]:
+            
+            # Save results to Excel with multiple sheets
+            with pd.ExcelWriter(output_path, engine='xlsxwriter') as writer:
+                results_df.to_excel(writer, sheet_name="Results", index=False)
+                prod_df.to_excel(writer, sheet_name="Production", index=False)
+                price_df.to_excel(writer, sheet_name="LMP", index=False)
+                flows_df.to_excel(writer, sheet_name="Flows", index=False)
             
 
 
-        return "status: Optimal", True
+            print("status: Optimal")
+            sys.exit(0)
 
     except Exception as e:
         print(f"Error in BTheta model: {str(e)}")

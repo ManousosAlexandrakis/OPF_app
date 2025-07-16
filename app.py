@@ -75,51 +75,72 @@ def submit():
             env=env
         )
 
-        # Extract solver status from output
-        status_line = next(
+        solver_status_line = next(
+            (line for line in result.stdout.splitlines() if "solver_status:" in line.lower()),
+            None
+        )
+        termination_line = next(
+            (line for line in result.stdout.splitlines() if "termination_condition:" in line.lower()),
+            None
+        )
+
+        # Extract solver status and termination condition from script output
+        solver_status_line = next(
             (line for line in result.stdout.splitlines() if "status:" in line.lower()),
             None
         )
-        status = "Unknown"  # Default if nothing matches
+        termination_line = next(
+            (line for line in result.stdout.splitlines() if "termination_condition:" in line.lower()),
+            None
+        )
 
-        if status_line:
-            status = status_line.strip()
-            if "optimal" in status.lower():
-                status = "Optimal"
-            elif "infeasible" in status.lower():
-                status = "Infeasible"
-            elif "unbounded" in status.lower():
-                status = "Unbounded"
-            else:
-                status = status.split(":")[-1].strip()
+        solver_status = "Unknown"
+        termination_condition = "Unknown"
 
-        if result.returncode != 0:
-            error_msg = f"Python script failed with {solver} solver:\n{result.stderr}"
-            return error_msg, 500
+        if solver_status_line:
+            solver_status = solver_status_line.split(":", 1)[-1].strip()
 
+        if termination_line:
+            termination_condition = termination_line.split(":", 1)[-1].strip()
+
+        # Check if output file exists before trying to load it
         if not os.path.exists(output_path):
-            return "Output file was not created", 500
-        
-                # Read the Excel file to pass data to template
+            return render_template(
+                "result.html",
+                output_filename=output_filename,
+                model_type=model_type.capitalize(),
+                solver=solver,
+                solver_status=solver_status,
+                termination_condition=termination_condition,
+                error="Output file was not created."
+            )
+
+        # Read the Excel file to pass data to template
         excel_data = pd.ExcelFile(output_path)
-        
-        # Prepare data for each sheet (first 10 rows)
+
+        # Prepare preview data for each sheet
         preview_data = {
             'results_data': excel_data.parse('Results').head(100).to_dict('records'),
             'production_data': excel_data.parse('Production').head(100).to_dict('records'),
-            'price_data': excel_data.parse('LMP').head(100).to_dict('records')
+            'price_data': excel_data.parse('LMP').head(100).to_dict('records'),
+            'flows_data': excel_data.parse('Flows').head(100).to_dict('records')
         }
 
         # Add reactive data if sheet exists and model supports it
         if model_type.lower() in ['bolognani', 'decoupled', 'ac']:
-            preview_data['reactive_data'] = excel_data.parse('Reactive').head(100).to_dict('records')
+            try:
+                preview_data['reactive_data'] = excel_data.parse('Reactive').head(100).to_dict('records')
+            except ValueError:
+                preview_data['reactive_data'] = []  # Sheet not found
 
+        # Final render
         return render_template(
             "result.html",
             output_filename=output_filename,
             model_type=model_type.capitalize(),
-            solver=solver.upper(),
-            status=status,
+            solver=solver,
+            solver_status=solver_status,
+            termination_condition=termination_condition,
             **preview_data
         )
 

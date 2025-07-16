@@ -59,7 +59,7 @@ def run_decoupled_model(input_path, output_path):
         # Create a dictionary to store the index of each bus
         # slack_index = buses.index(slack_bus)
 
-        bus_id_to_index = {buses[i]: i for i in range(len(buses)-1)}
+        bus_id_to_index = {buses[i]: i for i in range(len(buses))}
         bus_id_to_index[slack_bus] = buses.index(slack_bus)
 
 
@@ -312,6 +312,8 @@ def run_decoupled_model(input_path, output_path):
         
         results = solver.solve(model, tee=True)
         
+        print(f"solver_status: {results.solver.status}")
+        print(f"termination_condition: {results.solver.termination_condition}")
         # Check solution status
         if str(results.solver.status) != "ok":
             return f"Solver failed with status: {results.solver.status}", False
@@ -375,17 +377,20 @@ def run_decoupled_model(input_path, output_path):
         })
 
 
-            
+        # Only write Excel file if the termination condition is optimal
+        if results.solver.termination_condition in [TerminationCondition.optimal, TerminationCondition.locallyOptimal]:            
 
         # Save results to Excel with original sheet names
-        with pd.ExcelWriter(output_path, engine='xlsxwriter') as writer:
-            results_df.to_excel(writer, sheet_name="Results", index=False)
-            prod_df.to_excel(writer, sheet_name="Production", index=False)
-            Qreact_df.to_excel(writer,sheet_name="Reactive")
-            price_df.to_excel(writer, sheet_name="LMP", index=False)
-            flows_df.to_excel(writer, sheet_name="Flows", index=False)
+            with pd.ExcelWriter(output_path, engine='xlsxwriter') as writer:
+                results_df.to_excel(writer, sheet_name="Results", index=False)
+                prod_df.to_excel(writer, sheet_name="Production", index=False)
+                Qreact_df.to_excel(writer,sheet_name="Reactive")
+                price_df.to_excel(writer, sheet_name="LMP", index=False)
+                flows_df.to_excel(writer, sheet_name="Flows", index=False)
             
-        return "status: Optimal", True
+
+            print("status: Optimal")
+            sys.exit(0)
 
     except Exception as e:
         print(f"Error in Bolognani model: {str(e)}")
