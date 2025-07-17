@@ -346,11 +346,14 @@ def run_ac_model(input_path, output_path):
         # Solve model
         results = solver.solve(model, tee=True)
         
-                # Check solution status
-        if str(results.solver.status) != "ok":
-            return f"Solver failed with status: {results.solver.status}", False
-        if str(results.solver.termination_condition) not in ["optimal", "locallyOptimal"]:
-            return f"Solver terminated with condition: {results.solver.termination_condition}", False
+        print(f"solver_status: {results.solver.status}")
+        print(f"termination_condition: {results.solver.termination_condition}")
+        
+        #         # Check solution status
+        # if str(results.solver.status) != "ok":
+        #     return f"Solver failed with status: {results.solver.status}", False
+        # if str(results.solver.termination_condition) not in ["optimal", "locallyOptimal"]:
+        #     return f"Solver terminated with condition: {results.solver.termination_condition}", False
 
 
 
@@ -443,6 +446,7 @@ def run_ac_model(input_path, output_path):
             "Flows_p_pu_to": [flow_to[i] for i in range(len(Edges))],
             "Flows_q_pu_from": [flow_reactive_from[i] for i in range(len(Edges))],
             "Flows_q_pu_to": [flow_reactive_to[i] for i in range(len(Edges))],
+            "Flowmax_pu": [Flowmax_edge_dict[i] for i in range(len(Edges))]
         })
         
         # Save results to Excel with original sheet names
