@@ -321,38 +321,42 @@
     </div>
 
     <!-- Flows Sheet -->
-    <div id="flows-sheet" class="sheet-content">
-      <div class="table-container">
-        <table class="excel-table">
-          <thead>
-            <tr>
-              <th>Edge</th>
-              <th>From Bus</th>
-              <th>To Bus</th>
-              <th>Flow From (pu)</th>
-              <th>Flow To (pu)</th>
-              <th>Reactive From (pu)</th>
-              <th>Reactive To (pu)</th>
-              <th>Max Flow (pu)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for row in flows_data %}
-            <tr>
-              <td>{{ row.Edge }}</td>
-              <td>{{ row.from_bus }}</td>
-              <td>{{ row.flows_to }}</td>
-              <td>{{ "%.4f"|format(row.Flows_p_pu_from) }}</td>
-              <td>{{ "%.4f"|format(row.Flows_p_pu_to) }}</td>
-              <td>{{ "%.4f"|format(row.Flows_q_pu_from) }}</td>
-              <td>{{ "%.4f"|format(row.Flows_q_pu_to) }}</td>
-              <td>{{ "%.4f"|format(row.Flowmax_pu) }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
+<div id="flows-sheet" class="sheet-content">
+  <div class="table-container">
+    <table class="excel-table">
+      <thead>
+        <tr>
+          <th>Edge</th>
+          <th>From Bus</th>
+          <th>To Bus</th>
+          <th>Active Flow From (pu)</th>
+          <th>Active Flow To (pu)</th>
+          {% if model_type.lower() in ['bolognani', 'decoupled', 'ac'] %}
+          <th>Reactive Flow From (pu)</th>
+          <th>Reactive Flow To (pu)</th>
+          {% endif %}
+          <th>Max Flow (pu)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in flows_data %}
+        <tr>
+          <td>{{ row.Edge }}</td>
+          <td>{{ row.from_bus }}</td>
+          <td>{{ row.flows_to }}</td>
+          <td>{{ "%.4f"|format(row.Flows_p_pu_from) }}</td>
+          <td>{{ "%.4f"|format(row.Flows_p_pu_to) }}</td>
+          {% if model_type.lower() in ['bolognani', 'decoupled', 'ac'] %}
+          <td>{{ "%.4f"|format(row.Flows_q_pu_from) }}</td>
+          <td>{{ "%.4f"|format(row.Flows_q_pu_to) }}</td>
+          {% endif %}
+          <td>{{ "%.4f"|format(row.Flowmax_pu) }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 
     <p class="preview-note">Showing first 100 rows of each sheet. Scroll to see more. Download for complete data.</p>
 

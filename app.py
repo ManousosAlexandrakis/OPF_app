@@ -137,7 +137,7 @@ def submit():
         return render_template(
             "result.html",
             output_filename=output_filename,
-            model_type=model_type.capitalize(),
+            model_type="AC" if model_type.lower() == "ac" else model_type.capitalize(),
             solver=solver,
             solver_status=solver_status,
             termination_condition=termination_condition,
