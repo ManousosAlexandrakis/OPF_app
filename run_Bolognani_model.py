@@ -20,6 +20,8 @@ def run_bolognani_model(input_path, output_path):
             solver = SolverFactory("gurobi")
         elif solver_name == 'glpk':
             solver = SolverFactory("glpk")
+        elif solver_name == 'highs':
+            solver = SolverFactory("highs")
         else:
             raise ValueError(f"Unsupported solver for Bolognani model: {solver_name}")
         ###### Data Handling ######

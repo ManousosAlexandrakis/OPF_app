@@ -39,7 +39,7 @@ def submit():
         # Handle solver selection
         if model_type == 'ac':
             solver = 'ipopt'  # Force IPOPT for AC model
-        elif solver not in ['gurobi', 'glpk']:
+        elif solver not in ['gurobi', 'glpk','highs']:
             solver = 'gurobi'  # Default to Gurobi for linear models
 
         # Save input file
