@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Error Analysis</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Montserrat:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f7fa;
+            color: #333;
+        }
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        .navbar {
+            background: #00a0b0;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            margin-right: 1.5rem;
+            font-weight: 500;
+        }
+        .navbar a:hover {
+            text-decoration: underline;
+        }
+        .drop-zone {
+            border: 2px dashed #aaa;
+            border-radius: 10px;
+            padding: 2.5rem;
+            text-align: center;
+            background: #fffef9;
+            transition: 0.3s ease;
+            color: #666;
+            cursor: pointer;
+            margin-bottom: 1.5rem;
+        }
+        .drop-zone.highlight {
+            border-color: #00a0b0;
+            background-color: #e0f7fa;
+        }
+        .file-list {
+            margin: 1.5rem 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #eee;
+        }
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        .btn {
+            background: #00a0b0;
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .btn:hover {
+            background: #008a98;
+        }
+        .btn i {
+            margin-right: 8px;
+        }
+        .error-section {
+            margin-top: 2rem;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        }
+        .error-section h2 {
+            color: #2c3e50;
+            border-bottom: 2px solid #00a0b0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .error-section h3 {
+            margin: 1.5rem 0 1rem 0;
+            color: #00a0b0;
+        }
+        .error-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .error-table th, .error-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        .error-table th {
+            background-color: #f5f7fa;
+            font-weight: 500;
+        }
+        .error-table tr:hover {
+            background-color: #f9f9f9;
+        }
+        .angle-table td:nth-child(2) {
+            padding-left: 10px; /* Reduced padding to shift left */
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            background-color: #ffebee;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .stat-card h4 {
+            margin-top: 0;
+            color: #00a0b0;
+        }
+        .stat-value {
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .controls {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <a href="/">Home</a>
+        <a href="/theory">Theory</a>
+        <a href="/plotting">Plotting</a>
+        <a href="/error_analysis">Error Analysis</a>
+    </div>
+
+    <h1>Error Analysis</h1>
+    <p>Compare model results against AC reference solution</p>
+
+    <form method="POST" enctype="multipart/form-data" id="uploadForm">
+        <div class="drop-zone" id="dropZone">
+            <p><strong>Drag & drop</strong> OPF result files here</p>
+            <p>or</p>
+            <label for="fileInput" class="btn"><i class="fas fa-file-upload"></i> Select Files</label>
+            <input type="file" id="fileInput" name="files" multiple accept=".xlsx" hidden>
+        </div>
+        
+        <div class="file-list" id="fileList"></div>
+        
+        <div class="controls">
+            <button type="submit" class="btn">
+                <i class="fas fa-calculator"></i> Calculate Errors
+            </button>
+        </div>
+    </form>
+
+    {% if error %}
+        <div class="alert">{{ error }}</div>
+    {% endif %}
+
+{% if error_results %}
+    {% for model, errors in error_results.items() %}
+    <div class="error-section">
+        <h2>{{ model }} Model Errors</h2>
+        
+        <h3>Voltage Magnitude</h3>
+        <table class="error-table">
+            <tr>
+                <th>Metric</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Maximum Absolute Error</td>
+                <td>{{ errors.vm_max_abs }}</td>
+            </tr>
+            <tr>
+                <td>Mean Absolute Error</td>
+                <td>{{ errors.vm_mean_abs }}</td>
+            </tr>
+        </table>
+        
+            <h3>Voltage Angle</h3>
+            <table class="error-table"> <!-- Added angle-table class -->
+                <tr>
+                    <th>Metric</th>
+                <th>Value</th> <!-- Reduced padding for the label -->
+                </tr>
+                <tr>
+                    <td>Maximum Absolute Error</td>
+                    <td>{{ errors.va_max_abs }}</td> 
+                </tr>
+                <tr>
+                    <td>Mean Absolute Error</td>
+                    <td>{{ errors.va_mean_abs }}</td> <!-- Keep value padding -->
+                </tr>
+            </table>
+        
+        <h3>Active Power</h3>
+        <table class="error-table">
+            <tr>
+                <th>Metric</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Maximum Absolute Error</td>
+                <td>{{ errors.p_max_abs }}</td>
+            </tr>
+            <tr>
+                <td>Mean Absolute Error</td>
+                <td>{{ errors.p_mean_abs }}</td>
+            </tr>
+        </table>
+
+<h3>Reactive Power</h3>
+        <table class="error-table">
+            <tr>
+                <th>Metric</th>
+                <th>Value</th>
+            </tr>
+            <tr>
+                <td>Maximum Absolute Error</td>
+                <td>{{ errors.q_max_abs }}</td>
+            </tr>
+            <tr>
+                <td>Mean Absolute Error</td>
+                <td>{{ errors.q_mean_abs }}</td>
+            </tr>
+        </table>
+        
+        
+        <h3>Error Distribution</h3>
+        <div class="stat-card">
+            <p>95th Percentile Error: <span class="stat-value">{{ errors.error_95th_percentile }}</span></p>
+            <p>Interquartile Range (IQR): <span class="stat-value">{{ errors.error_iqr }}</span></p>
+        </div>
+        
+        <h3>Worst Performing Buses</h3>
+        <div class="stat-card">
+            <p>Highest Voltage Error: Bus <span class="stat-value">{{ errors.max_error_bus }}</span> ({{ errors.max_error_value }})</p>
+            <p>Highest Angle Error: Bus <span class="stat-value">{{ errors.max_angle_bus }}</span> ({{ errors.max_angle_value }})</p>
+        </div>
+    </div>
+    {% endfor %}
+{% endif %}
+
+
+
+
+
+    <script>
+        // Drag and drop functionality
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('highlight');
+        });
+
+        ['dragleave', 'dragend'].forEach(type => {
+            dropZone.addEventListener(type, () => {
+                dropZone.classList.remove('highlight');
+            });
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('highlight');
+            fileInput.files = e.dataTransfer.files;
+            updateFileList();
+        });
+
+        fileInput.addEventListener('change', () => {
+            updateFileList();
+        });
+
+        function updateFileList() {
+            fileList.innerHTML = '';
+            if (fileInput.files.length > 0) {
+                Array.from(fileInput.files).forEach(file => {
+                    const fileItem = document.createElement('div');
+                    fileItem.className = 'file-item';
+                    fileItem.textContent = file.name;
+                    fileList.appendChild(fileItem);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
